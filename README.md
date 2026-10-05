@@ -218,3 +218,4 @@ defaults to the value configured in plugin settings.
 
 - [`docs/portal-integration.md`](docs/portal-integration.md) — what connects this
   repository to the Velora portal, and what the plugins deliberately cannot do
+- [`docs/open-issues.md`](docs/open-issues.md) — two measured, unclosed defects
