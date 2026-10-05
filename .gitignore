@@ -1,0 +1,22 @@
+# Composer dev dependencies (PHPUnit, Brain Monkey) — installed per test run.
+vendor/
+.phpunit.result.cache
+
+# Test + coverage artefacts
+tests/reports/
+core/coverage/
+
+# Core JS bundle (built by `make wp-build-core`)
+core/node_modules/
+core/dist/
+
+# Built plugin assets — copied in from core/dist by the packaging script
+breeder/assets/
+club/assets/
+
+# Release ZIPs
+dist/
+
+# SonarQube scanner working directory
+.scannerwork/
+

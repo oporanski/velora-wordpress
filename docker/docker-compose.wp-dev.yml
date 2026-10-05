@@ -1,0 +1,115 @@
+# WordPress dev environment for Velora embed plugins.
+# Usage: from repo root, `make wp-up` / `make wp-down` / `make wp-rebuild` / `make wp-reset`.
+#
+# Four services:
+#   - wp-mariadb   internal-only MariaDB shared by both WP installs (one container, two databases)
+#   - wp-breeder   :8081  → plugin velora-breeder-widgets, pre-linked to "royal-whiskers-cattery"
+#   - wp-club      :8082  → plugin velora-club-widgets,    pre-linked to "klub-hodowcow-elitarnych"
+#   - wp-html-test :8083  → nginx serving plain-HTML test pages + the built embed.js bundle
+#
+# Both WP services run the image tag matching the "Tested up to" header the plugins declare in
+# their readme.txt. That header is a claim the plugin was exercised on this version, and this stack
+# is the only thing that makes it true — pinned at 6.6 while the readmes said 7.0, it was not
+# (found 2026-08-10, docs/wporg-independent-check-2026-08-10.md F9). Bump both together.
+#
+# Why MariaDB and not SQLite: the SQLite Database Integration plugin has a known bug where
+# INSERT with serialized PHP arrays into wp_usermeta (used for session_tokens) fails silently.
+# Result: login appears to succeed but the next request immediately bounces back to wp-login
+# with reauth=1. MariaDB is ~150 MB extra RAM; the trade is worth it.
+#
+# The core JS bundle (core/dist/) is volume-mounted into each container,
+# so a host rebuild (`make wp-rebuild`) updates every WP site and the HTML test page at once.
+
+services:
+  wp-mariadb:
+    image: mariadb:10.11
+    container_name: velora-wp-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: wp_breeder
+      # Empty password — dev-only container not exposed beyond the docker network.
+      MARIADB_USER: wp
+      MARIADB_PASSWORD: wp
+    volumes:
+      - wp-mariadb-data:/var/lib/mysql
+      - ./wp-dev/mariadb-init.sh:/docker-entrypoint-initdb.d/00-create-databases.sh:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  wp-breeder:
+    image: wordpress:7.0-apache
+    container_name: velora-wp-breeder
+    restart: unless-stopped
+    depends_on:
+      wp-mariadb:
+        condition: service_healthy
+    ports:
+      - "8081:80"
+    volumes:
+      - ../breeder:/var/www/html/wp-content/plugins/velora-breeder-widgets
+      - ../core/dist:/var/www/html/wp-content/plugins/velora-breeder-widgets/assets:ro
+      - wp-breeder-core:/var/www/html
+      - ./wp-dev/bootstrap-breeder.sh:/usr/local/bin/velora-bootstrap.sh:ro
+    environment:
+      WORDPRESS_DEBUG: "1"
+      VELORA_BREEDER_SLUG: "royal-whiskers-cattery"
+      VELORA_API_BASE: "http://localhost:4000"
+      WORDPRESS_DB_HOST: wp-mariadb
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wp
+      WORDPRESS_DB_NAME: wp_breeder
+    command: >
+      bash -c "
+        /usr/local/bin/velora-bootstrap.sh &
+        docker-entrypoint.sh apache2-foreground
+      "
+
+  wp-club:
+    image: wordpress:7.0-apache
+    container_name: velora-wp-club
+    restart: unless-stopped
+    depends_on:
+      wp-mariadb:
+        condition: service_healthy
+    ports:
+      - "8082:80"
+    volumes:
+      - ../club:/var/www/html/wp-content/plugins/velora-club-widgets
+      - ../core/dist:/var/www/html/wp-content/plugins/velora-club-widgets/assets:ro
+      - wp-club-core:/var/www/html
+      - ./wp-dev/bootstrap-club.sh:/usr/local/bin/velora-bootstrap.sh:ro
+    environment:
+      WORDPRESS_DEBUG: "1"
+      VELORA_CLUB_SLUG: "klub-hodowcow-elitarnych"
+      VELORA_API_BASE: "http://localhost:4000"
+      WORDPRESS_DB_HOST: wp-mariadb
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wp
+      WORDPRESS_DB_NAME: wp_club
+    command: >
+      bash -c "
+        /usr/local/bin/velora-bootstrap.sh &
+        docker-entrypoint.sh apache2-foreground
+      "
+
+  wp-html-test:
+    image: nginx:alpine
+    container_name: velora-wp-html-test
+    restart: unless-stopped
+    ports:
+      - "8083:80"
+    volumes:
+      # Mount two sibling directories into separate paths, then alias /embed → dist in nginx.
+      # Avoids nested bind-mount (not allowed on Docker Desktop Windows).
+      - ../core/test-pages:/usr/share/nginx/html:ro
+      - ../core/dist:/srv/embed:ro
+      - ./wp-dev/nginx-test.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  wp-mariadb-data:
+  wp-breeder-core:
+  wp-club-core:

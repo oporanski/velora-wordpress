@@ -1,0 +1,25 @@
+# Files and directories that should NOT be included in the WP.org distribution ZIP.
+# Used by `make wp-package-breeder`.
+.distignore
+.git
+.gitignore
+.gitattributes
+.editorconfig
+.DS_Store
+node_modules
+*.log
+*.lock
+package.json
+package-lock.json
+composer.json
+composer.lock
+phpunit.xml
+phpcs.xml
+phpstan.neon
+tests
+.github
+.vscode
+.idea
+README.dev.md
+TODO.md
+.wordpress-org

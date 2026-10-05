@@ -1,0 +1,282 @@
+# Copyright (C) 2026 Velora
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Velora Breeder Widgets 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/velora-breeder-widgets\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-08-10T12:33:52+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: velora-breeder-widgets\n"
+
+#. Plugin Name of the plugin
+#: velora-breeder-widgets.php
+#: includes/view-settings.php:11
+msgid "Velora Breeder Widgets"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: velora-breeder-widgets.php
+msgid "https://velora.pet/"
+msgstr ""
+
+#. Description of the plugin
+#: velora-breeder-widgets.php
+msgid "Embed your Velora cattery/kennel content (animals, gallery, listings, posts, events, contact form) on your WordPress site."
+msgstr ""
+
+#. Author of the plugin
+#: velora-breeder-widgets.php
+msgid "Velora"
+msgstr ""
+
+#: includes/class-plugin.php:45
+msgid "Velora Breeder"
+msgstr ""
+
+#: includes/class-plugin.php:132
+msgid "Checking connection…"
+msgstr ""
+
+#. translators: %s is the breeder (cattery/kennel) name returned by the Velora API.
+#: includes/class-plugin.php:134
+#, php-format
+msgid "Connected. Breeder: %s"
+msgstr ""
+
+#. translators: %s is the breeder (cattery/kennel) name returned by the Velora API.
+#: includes/class-plugin.php:136
+#, php-format
+msgid "Profile \"%s\" found, but no API key was entered — the contact form needs one and was not checked."
+msgstr ""
+
+#. translators: %s is the breeder slug entered in the settings form.
+#: includes/class-plugin.php:138
+#, php-format
+msgid "Slug \"%s\" does not exist. Check the spelling (compare it with the profile URL in Velora)."
+msgstr ""
+
+#: includes/class-plugin.php:139
+msgid "The API key was rejected. Copy it again from the Velora panel, under Developers."
+msgstr ""
+
+#. translators: %s is the breeder slug entered in the settings form.
+#: includes/class-plugin.php:141
+#, php-format
+msgid "This API key belongs to a different organisation than \"%s\"."
+msgstr ""
+
+#: includes/class-plugin.php:142
+msgid "\"API base URL\" must be a full http:// or https:// address."
+msgstr ""
+
+#: includes/class-plugin.php:143
+msgid "The API server is not responding — check \"API base URL\"."
+msgstr ""
+
+#: includes/class-plugin.php:144
+msgid "The server returned an unexpected response — check that \"API base URL\" points to the Velora API."
+msgstr ""
+
+#: includes/class-plugin.php:145
+msgid "Network error"
+msgstr ""
+
+#: includes/class-plugin.php:146
+msgid "Enter the \"API base URL\"."
+msgstr ""
+
+#: includes/class-plugin.php:147
+msgid "Enter the \"Default breeder slug\"."
+msgstr ""
+
+#: includes/class-rest.php:35
+msgid "Could not reach Velora API."
+msgstr ""
+
+#: includes/class-rest.php:40
+msgid "Too many submissions. Try again later."
+msgstr ""
+
+#: includes/class-rest.php:45
+msgid "Plugin is not configured. Set API base and key in plugin settings."
+msgstr ""
+
+#: includes/view-settings.php:14
+msgid "Configure the connection to your Velora breeder profile. The API key is required only for contact form submissions; read-only widgets (animals, gallery, listings, posts, events) work without one."
+msgstr ""
+
+#: includes/view-settings.php:23
+msgid "API base URL"
+msgstr ""
+
+#: includes/view-settings.php:34
+msgid "Velora external API base (no trailing slash)."
+msgstr ""
+
+#: includes/view-settings.php:39
+msgid "Profile base URL"
+msgstr ""
+
+#: includes/view-settings.php:50
+msgid "Public Velora portal URL. Card/row clicks open profiles here."
+msgstr ""
+
+#: includes/view-settings.php:55
+msgid "Default breeder slug"
+msgstr ""
+
+#: includes/view-settings.php:66
+msgid "Used when a shortcode omits the slug attribute."
+msgstr ""
+
+#: includes/view-settings.php:71
+msgid "API key (for contact form)"
+msgstr ""
+
+#: includes/view-settings.php:84
+msgid "Generate in Velora: Settings → Developers → Create API key. Must start with \"vk_live_\"."
+msgstr ""
+
+#: includes/view-settings.php:90
+msgid "Language"
+msgstr ""
+
+#: includes/view-settings.php:105
+msgid "Show \"Powered by Velora\" link"
+msgstr ""
+
+#: includes/view-settings.php:118
+msgid "Off by default. When enabled, a small \"Powered by Velora\" link is shown under each widget on your public pages."
+msgstr ""
+
+#: includes/view-settings.php:126
+msgid "Test connection"
+msgstr ""
+
+#: includes/view-settings.php:130
+msgid "Checks the values entered above without saving them. If they work, click \"Save changes\"."
+msgstr ""
+
+#: includes/view-settings.php:141
+msgid "Available shortcodes"
+msgstr ""
+
+#: includes/view-settings.php:143
+msgid "current animals grid"
+msgstr ""
+
+#: includes/view-settings.php:144
+msgid "contact/inquiry form — messages are delivered to your Velora inbox"
+msgstr ""
+
+#: includes/view-settings.php:148
+msgid "Optional attributes: slug=\"...\" limit=\"12\" theme=\"auto|light|dark\". Slug defaults to the value configured above."
+msgstr ""
+
+#: blocks/editor.js:24
+msgid "Auto"
+msgstr ""
+
+#: blocks/editor.js:25
+msgid "Light"
+msgstr ""
+
+#: blocks/editor.js:26
+msgid "Dark"
+msgstr ""
+
+#: blocks/editor.js:33
+msgid "Velora — Breeder"
+msgstr ""
+
+#: blocks/editor.js:41
+msgid "Breeder slug (override)"
+msgstr ""
+
+#: blocks/editor.js:42
+msgid "Leave empty to use the default from plugin settings."
+msgstr ""
+
+#: blocks/editor.js:47
+msgid "Theme"
+msgstr ""
+
+#: blocks/editor.js:56
+msgid "Limit"
+msgstr ""
+
+#: blocks/editor.js:81
+msgid "Velora embed widget — rendered on the front-end."
+msgstr ""
+
+#: blocks/editor.js:90
+msgid "Settings"
+msgstr ""
+
+#: blocks/editor.js:99
+msgid "Live widget content appears on the published page. Use the panel on the right to configure."
+msgstr ""
+
+#: blocks/editor.js:114
+msgid "Velora — About the breeder"
+msgstr ""
+
+#: blocks/editor.js:119
+msgid "Velora — Animals"
+msgstr ""
+
+#: blocks/editor.js:129
+msgid "Velora — Gallery"
+msgstr ""
+
+#: blocks/editor.js:139
+msgid "Velora — Listings"
+msgstr ""
+
+#: blocks/editor.js:149
+msgid "Velora — News"
+msgstr ""
+
+#: blocks/editor.js:159
+msgid "Velora — Shows"
+msgstr ""
+
+#: blocks/editor.js:172
+msgid "When"
+msgstr ""
+
+#: blocks/editor.js:175
+msgid "Upcoming"
+msgstr ""
+
+#: blocks/editor.js:176
+msgid "Past"
+msgstr ""
+
+#: blocks/editor.js:177
+msgid "All"
+msgstr ""
+
+#: blocks/editor.js:182
+msgid "Show filter toolbar"
+msgstr ""
+
+#: blocks/editor.js:185
+msgid "Show"
+msgstr ""
+
+#: blocks/editor.js:186
+msgid "Hide"
+msgstr ""
+
+#: blocks/editor.js:194
+msgid "Velora — Contact"
+msgstr ""
+

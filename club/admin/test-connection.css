@@ -1,0 +1,15 @@
+/* "Test connection" feedback box — uses WP admin's own color tokens so the
+   widget blends with whichever admin color scheme the user picked. */
+#velora-test-connection-result {
+    display: none;
+    margin: 1em 0;
+    padding: .8em 1em;
+    border-left: 4px solid #ccc;
+    background: #fff;
+}
+.velora-test-result-pending  { border-left-color: #2271b1 !important; }
+.velora-test-result-success  { border-left-color: #00a32a !important; }
+.velora-test-result-warning  { border-left-color: #dba617 !important; }
+.velora-test-result-error    { border-left-color: #d63638 !important; color: #d63638; }
+
+.velora-test-row td { padding-top: 0 !important; }

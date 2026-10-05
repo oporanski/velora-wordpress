@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Velora Embed — test pages</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
+    h1 { border-bottom: 2px solid #333; padding-bottom: .5rem; }
+    h2 { margin-top: 2rem; }
+    ul { padding-left: 1.2em; }
+    li { margin: .35em 0; }
+    code { background: #eee; padding: 1px 6px; border-radius: 3px; font-size: .9em; }
+    .endpoint { color: #666; font-size: .8em; margin-left: 1.2rem; }
+  </style>
+</head>
+<body>
+  <h1>Velora Embed — Test Pages</h1>
+  <p>Bezpośrednie testy core JS bundle-u (bez WordPress PHP warstwy).</p>
+
+  <h2>Hodowca — royal-whiskers-cattery</h2>
+  <ul>
+    <li><a href="/breeder-animals.html">breeder-animals</a> — lista zwierząt z color + tytuły</li>
+    <li><a href="/breeder-listings.html">breeder-listings</a> — aktualne ogłoszenia (dostępne kocięta)</li>
+    <li><a href="/breeder-posts.html">breeder-posts</a> — aktualności z hodowli</li>
+    <li><a href="/breeder-contact.html">breeder-contact</a> — formularz → CRM</li>
+  </ul>
+  <p style="font-size:.85em;color:#666;background:#fff3cd;padding:.5rem 1rem;border-left:4px solid #f4b400;border-radius:4px;">
+    <strong>⚠ Uwaga:</strong> Mioty (litters) to <strong>prywatne dane hodowli</strong> — nigdy nie są dostępne przez publiczne widgety embed.
+  </p>
+
+  <h2>Klub — klub-hodowcow-elitarnych</h2>
+  <ul>
+    <li><a href="/club-breeders.html">club-breeders</a> — lista członków, filtrowalna, sortowalna, switch karty/tabela</li>
+    <li><a href="/club-listings.html">club-listings</a> — ogłoszenia członków klubu</li>
+    <li><a href="/club-posts.html">club-posts</a> — aktualności klubu</li>
+    <li><a href="/club-events.html">club-events</a> — wystawy i pokazy</li>
+    <li><a href="/club-documents.html">club-documents</a> — regulaminy, formularze, statut</li>
+    <li><a href="/club-contact.html">club-contact</a> — formularz z routingiem do działów</li>
+  </ul>
+
+  <h2>WordPress (z pełnym pluginem)</h2>
+  <ul>
+    <li><a href="http://localhost:8081/" target="_blank">localhost:8081</a> — WP hodowcy</li>
+    <li><a href="http://localhost:8082/" target="_blank">localhost:8082</a> — WP klubu</li>
+  </ul>
+
+  <p><em>Otwórz DevTools console (F12) żeby zobaczyć komunikaty inicjalizacji bundle-a.</em></p>
+  <script src="/embed/embed.js"></script>
+</body>
+</html>

@@ -1,0 +1,872 @@
+/*
+ * Velora embed styles — theme-neutral.
+ *
+ * Goal: blend into the host site's typography and color scheme. We DON'T set
+ * background colors, text colors, or fonts directly. Instead we use:
+ *   - color: inherit       (text picks up the page's text color)
+ *   - currentColor         (borders/accents tint themselves with text color)
+ *   - color-mix()          (subtle shades of the current color)
+ *   - WordPress preset CSS vars where available (--wp--preset--color--*)
+ *
+ * This means a black-text-on-cream WP theme renders the widget in cream + black,
+ * and a white-text-on-navy theme renders it in navy + white — automatically.
+ * Users can override the accent color via:  --velora-accent: #yourcolor
+ * on the host page (e.g. <body style="--velora-accent: #4a7c59">).
+ */
+
+.velora-w {
+  --velora-accent:
+    var(--wp--preset--color--primary,
+    var(--wp--preset--color--vivid-cyan-blue,
+    var(--velora-accent-fallback, #4a7c59)));
+  --velora-border: color-mix(in srgb, currentColor 15%, transparent);
+  --velora-border-strong: color-mix(in srgb, currentColor 25%, transparent);
+  --velora-surface-soft: color-mix(in srgb, currentColor 5%, transparent);
+  --velora-surface-soft-hover: color-mix(in srgb, currentColor 8%, transparent);
+  --velora-text-muted: color-mix(in srgb, currentColor 65%, transparent);
+  --velora-radius: 6px;
+  --velora-gap: 1rem;
+  --velora-danger: #d33;
+  --velora-success: #2c7a3d;
+
+  color: inherit;
+  font: inherit;
+  line-height: 1.5;
+  box-sizing: border-box;
+  margin: 1rem 0;
+}
+
+.velora-w *,
+.velora-w *::before,
+.velora-w *::after {
+  box-sizing: inherit;
+}
+
+/* Optional explicit theme overrides — use only when host theme has no useful colors */
+.velora-w.velora-w-explicit-light { color: #1a1a1a; --velora-accent-fallback: #4a7c59; }
+.velora-w.velora-w-explicit-dark  { color: #e8eaed; --velora-accent-fallback: #7cb98f; }
+
+/* ─ Toolbar (filters + sort + layout switch) ────────────── */
+
+.velora-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: .75rem;
+  border: 1px solid var(--velora-border);
+  border-radius: var(--velora-radius);
+  background: var(--velora-surface-soft);
+}
+
+.velora-toolbar-group {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.velora-toolbar-label {
+  font-size: .75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  opacity: .7;
+}
+
+.velora-toolbar-select,
+.velora-toolbar-input {
+  font: inherit;
+  font-size: .875rem;
+  padding: .35rem .5rem;
+  border: 1px solid var(--velora-border-strong);
+  border-radius: 4px;
+  background: var(--velora-surface-soft);
+  color: inherit;
+  min-width: 130px;
+}
+
+.velora-toolbar-spacer { flex: 1; }
+
+.velora-toolbar-count {
+  font-size: .8125rem;
+  opacity: .7;
+}
+
+.velora-toolbar-layout {
+  display: inline-flex;
+  border: 1px solid var(--velora-border-strong);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.velora-toolbar-layout button {
+  font: inherit;
+  font-size: .8125rem;
+  padding: .35rem .75rem;
+  background: transparent;
+  color: inherit;
+  border: none;
+  cursor: pointer;
+  border-right: 1px solid var(--velora-border);
+}
+
+.velora-toolbar-layout button:last-child { border-right: none; }
+.velora-toolbar-layout button[aria-pressed="true"] { background: var(--velora-surface-soft-hover); font-weight: 600; }
+
+/* ─ Grid + cards ────────────────────────────────────────── */
+
+.velora-grid {
+  display: grid;
+  /* Responsive minmax — narrow phones get 1 col, big screens up to 6 cols */
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+  gap: var(--velora-gap);
+}
+
+.velora-grid-breeders {
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+}
+
+.velora-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--velora-border);
+  border-radius: var(--velora-radius);
+  overflow: hidden;
+  background: transparent;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.velora-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--velora-border-strong);
+  box-shadow: 0 4px 12px color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.velora-card:focus-visible {
+  outline: 2px solid var(--velora-accent);
+  outline-offset: 2px;
+}
+
+.velora-card-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: var(--velora-surface-soft);
+}
+
+.velora-card-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  opacity: .35;
+}
+
+.velora-card-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: .75rem 0 0 .75rem;
+  flex-shrink: 0;
+}
+
+.velora-card-avatar-placeholder {
+  background: color-mix(in srgb, var(--velora-accent) 80%, transparent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.velora-card-body {
+  padding: .75rem 1rem 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.velora-card-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: inherit;
+}
+
+.velora-card-breed,
+.velora-card-species {
+  margin: 0;
+  font-size: .875rem;
+  color: var(--velora-text-muted);
+}
+
+.velora-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .375rem;
+  font-size: .75rem;
+  margin-top: .25rem;
+}
+
+.velora-tag {
+  display: inline-block;
+  padding: 2px .5rem;
+  border-radius: 3px;
+  background: var(--velora-surface-soft);
+  border: 1px solid var(--velora-border);
+  white-space: nowrap;
+}
+
+.velora-tag-verified { color: var(--velora-success); border-color: var(--velora-success); }
+.velora-tag-title { background: color-mix(in srgb, var(--velora-accent) 15%, transparent); border-color: color-mix(in srgb, var(--velora-accent) 50%, transparent); font-weight: 600; }
+
+/* ─ Table layout (large lists) ──────────────────────────── */
+
+.velora-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--velora-border);
+  border-radius: var(--velora-radius);
+}
+
+.velora-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9375rem;
+  color: inherit;
+}
+
+.velora-table th,
+.velora-table td {
+  padding: .65rem .85rem;
+  text-align: left;
+  border-bottom: 1px solid var(--velora-border);
+  vertical-align: middle;
+}
+
+.velora-table th {
+  font-weight: 600;
+  font-size: .8125rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  background: var(--velora-surface-soft);
+  position: sticky;
+  top: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.velora-table th[aria-sort] { background: var(--velora-surface-soft-hover); }
+.velora-table th[aria-sort="ascending"]::after  { content: ' ▲'; opacity: .6; }
+.velora-table th[aria-sort="descending"]::after { content: ' ▼'; opacity: .6; }
+
+.velora-table tbody tr:hover { background: var(--velora-surface-soft); }
+.velora-table tbody tr:last-child td { border-bottom: none; }
+
+.velora-table-link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+}
+.velora-table-link:hover { text-decoration: underline; }
+
+/* Subtle inline verified mark inside the breeder link — never wraps to a new line. */
+.velora-table-verified {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--velora-success);
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  cursor: help;
+}
+
+.velora-table-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+  margin-right: .5rem;
+}
+
+/* ─ States (loading / error / empty) ────────────────────── */
+
+.velora-state {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--velora-text-muted);
+}
+
+.velora-state-error { color: var(--velora-danger); }
+.velora-state-detail { font-size: .8125rem; opacity: .75; margin: .25rem 0 .75rem; }
+
+.velora-spinner {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--velora-border-strong);
+  border-top-color: var(--velora-accent);
+  border-radius: 50%;
+  animation: velora-spin .8s linear infinite;
+  margin-bottom: .75rem;
+}
+
+@keyframes velora-spin { to { transform: rotate(360deg); } }
+
+/* ─ Buttons ─────────────────────────────────────────────── */
+
+.velora-btn {
+  background: var(--velora-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--velora-radius);
+  padding: .5rem 1.25rem;
+  font: inherit;
+  font-size: .9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter .15s ease;
+}
+
+.velora-btn:hover  { filter: brightness(.92); }
+.velora-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+/* ─ Footer ──────────────────────────────────────────────── */
+
+.velora-footer {
+  margin-top: 1rem;
+  padding-top: .75rem;
+  border-top: 1px solid var(--velora-border);
+  text-align: center;
+  font-size: .75rem;
+  opacity: .65;
+}
+.velora-footer a { color: inherit; text-decoration: none; }
+.velora-footer a:hover { text-decoration: underline; }
+
+/* ─ Contact form — inherits theme typography + colors ──── */
+
+.velora-form {
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: .875rem;
+}
+
+.velora-form-field { display: flex; flex-direction: column; gap: .375rem; }
+
+.velora-form-label {
+  font: inherit;
+  font-size: .875rem;
+  font-weight: 500;
+  color: inherit;
+}
+.velora-form-label-required::after { content: ' *'; color: var(--velora-danger); }
+
+/*
+ * Inputs deliberately use minimal styling so WP theme's form styles take over.
+ * If theme has no input styles (rare), our fallback keeps things readable.
+ */
+.velora-form-input,
+.velora-form-textarea {
+  font: inherit;
+  font-size: .9375rem;
+  padding: .5rem .75rem;
+  border: 1px solid var(--velora-border-strong);
+  border-radius: var(--velora-radius);
+  background: var(--velora-surface-soft);
+  color: inherit;
+  width: 100%;
+}
+
+.velora-form-input:focus,
+.velora-form-textarea:focus {
+  outline: 2px solid var(--velora-accent);
+  outline-offset: 1px;
+  border-color: var(--velora-accent);
+}
+
+.velora-form-textarea { min-height: 110px; resize: vertical; }
+
+.velora-form-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  font-size: .8125rem;
+  opacity: .85;
+}
+.velora-form-consent input { margin-top: .25rem; }
+
+/* ─ Gallery — album cards (preferred view: list of sub-galleries) ─ */
+.velora-grid-gallery-albums {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.velora-gallery-album {
+  display: flex; flex-direction: column;
+  text-align: left; padding: 0; border: 1px solid var(--velora-border);
+  background: var(--velora-surface-soft); cursor: pointer;
+  border-radius: var(--velora-radius); overflow: hidden;
+  font: inherit; color: inherit;
+  transition: border-color .15s, transform .15s;
+}
+.velora-gallery-album:hover {
+  border-color: var(--velora-border-strong); transform: translateY(-2px);
+}
+.velora-gallery-album-cover {
+  aspect-ratio: 4 / 3; background: var(--velora-surface-soft); overflow: hidden;
+}
+.velora-gallery-album-cover img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.velora-gallery-album-body {
+  padding: .75rem 1rem; display: flex; flex-direction: column; gap: .25rem;
+}
+.velora-gallery-album-title { margin: 0; font-size: 1rem; font-weight: 600; }
+.velora-gallery-album-meta { margin: 0; font-size: .8rem; color: var(--velora-text-muted); }
+.velora-gallery-album-desc { margin: .25rem 0 0; font-size: .85rem; opacity: .8; }
+
+/* ─ Gallery — flat photo grid (legacy class kept for back-compat) ─ */
+.velora-grid-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: .5rem;
+}
+.velora-gallery-tile {
+  position: relative; padding: 0; border: 0; cursor: pointer; background: none;
+  aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--velora-radius);
+  display: block;
+}
+.velora-gallery-thumb {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .25s ease;
+}
+.velora-gallery-tile:hover .velora-gallery-thumb { transform: scale(1.04); }
+.velora-gallery-caption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: .35rem .5rem; font-size: 11px;
+  color: #fff; background: linear-gradient(to top, rgba(0,0,0,.6), transparent);
+  text-align: left;
+}
+
+/* Lightbox — appended to <body>, escapes the widget container's CSS scope */
+.velora-lightbox {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.92);
+  display: flex; align-items: center; justify-content: center;
+}
+.velora-lightbox-stage {
+  max-width: 92vw; max-height: 80vh; display: flex; align-items: center; justify-content: center;
+}
+.velora-lightbox-img {
+  max-width: 100%; max-height: 80vh; object-fit: contain; box-shadow: 0 8px 32px rgba(0,0,0,.4);
+}
+.velora-lightbox-caption {
+  position: absolute; bottom: 1rem; left: 0; right: 0; text-align: center;
+  color: #f5f5f5; font-size: 13px;
+}
+.velora-lightbox-btn {
+  position: absolute; background: none; border: 0; color: #fff;
+  font-size: 32px; line-height: 1; cursor: pointer; padding: .5rem 1rem;
+  opacity: .8; transition: opacity .15s;
+}
+.velora-lightbox-btn:hover { opacity: 1; }
+.velora-lightbox-close { top: 1rem; right: 1rem; font-size: 28px; }
+.velora-lightbox-prev  { left: 1rem;  top: 50%; transform: translateY(-50%); font-size: 48px; }
+.velora-lightbox-next  { right: 1rem; top: 50%; transform: translateY(-50%); font-size: 48px; }
+
+.velora-form-captcha {
+  /* Cap.js <cap-widget> container — proof-of-work, no third-party iframe.
+     Widget self-themes via CSS custom properties; we just reserve space. */
+  margin: .25rem 0;
+  min-height: 60px;
+}
+
+.velora-form-captcha cap-widget::part(attribution) {
+  /* Hides the "Secured by Cap" badge the widget renders into its own shadow
+     DOM. WP.org guideline #10 requires every credit shown on a visitor-facing
+     page to be optional and default to not showing, and the upstream widget
+     offers no switch — so it is turned off here, through the part it exposes.
+     Credit for Cap.js is not dropped: it is stated in readme.txt under
+     "Third-party library licenses".
+
+     visibility, not display: the widget's shadow stylesheet sets
+     `display: block !important` on that link, and an important declaration
+     from inside a shadow tree outranks an important one from the page. Checked
+     in Chrome — `display: none !important` here left the computed display at
+     `block`, while `visibility` (which the shadow tree never declares) applies
+     cleanly. */
+  visibility: hidden;
+}
+
+.velora-form-honeypot {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
+.velora-form-feedback {
+  padding: .75rem 1rem;
+  border-radius: var(--velora-radius);
+  font-size: .875rem;
+  border: 1px solid currentColor;
+}
+
+.velora-form-feedback-success { color: var(--velora-success); background: color-mix(in srgb, var(--velora-success) 8%, transparent); }
+.velora-form-feedback-error   { color: var(--velora-danger);  background: color-mix(in srgb, var(--velora-danger) 8%, transparent); }
+
+/* ─ Event card extras ───────────────────────────────────── */
+
+.velora-card-event-date,
+.velora-card-event-location {
+  margin: 0;
+  font-size: .8125rem;
+  color: var(--velora-text-muted);
+}
+
+/* ─ Listing card extras ─────────────────────────────────── */
+
+.velora-card-listing-price {
+  margin-top: .5rem;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--velora-accent);
+}
+
+.velora-card-listing-price-ask {
+  font-style: italic;
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--velora-text-muted);
+}
+
+/* ─ Posts (article list) ────────────────────────────────── */
+
+.velora-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.velora-post {
+  display: grid;
+  grid-template-columns: minmax(0, 200px) 1fr;
+  gap: 1.25rem;
+  border-bottom: 1px solid var(--velora-border);
+  padding-bottom: 1.5rem;
+}
+
+/* Full-width layout for the post-card view (renders body + multi-image
+   gallery + sanitized HTML content all stacked vertically). Matches
+   PostCardMedia layout on the portal. */
+.velora-post-full {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.velora-post:last-child { border-bottom: none; padding-bottom: 0; }
+
+.velora-post-cover {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--velora-radius);
+  background: var(--velora-surface-soft);
+}
+
+.velora-post:not(:has(.velora-post-cover)) {
+  grid-template-columns: 1fr;
+}
+
+/* ─ Post body content (sanitized Tiptap HTML) ─────────────── */
+.velora-post-content { font-size: .9375rem; line-height: 1.55; }
+.velora-post-content p { margin: 0 0 .6em; }
+.velora-post-content p:last-child { margin-bottom: 0; }
+.velora-post-content h1, .velora-post-content h2, .velora-post-content h3,
+.velora-post-content h4, .velora-post-content h5, .velora-post-content h6 {
+  margin: 1em 0 .4em; font-weight: 600;
+}
+.velora-post-content ul, .velora-post-content ol { margin: 0 0 .6em 1.4em; padding: 0; }
+.velora-post-content blockquote {
+  margin: .5em 0;
+  padding: .25em .75em;
+  border-left: 3px solid var(--velora-accent);
+  color: var(--velora-text-muted);
+}
+.velora-post-content a { color: var(--velora-accent); }
+.velora-post-content img {
+  max-width: 100%; height: auto; margin: .5em 0;
+  border-radius: var(--velora-radius);
+}
+
+/* ─ Mini-gallery (matches portal PostCardMedia 1/2/3/4+ layouts) ─ */
+.velora-post-gallery {
+  display: grid;
+  gap: 2px;
+  max-width: 480px;
+  margin: 0 auto;
+  border: 1px solid var(--velora-border);
+  border-radius: var(--velora-radius);
+  overflow: hidden;
+}
+.velora-post-gallery-1 { grid-template-columns: 1fr; }
+.velora-post-gallery-2 { grid-template-columns: 1fr 1fr; }
+.velora-post-gallery-3 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.velora-post-gallery-3 .velora-post-gallery-tile:first-child {
+  grid-row: span 2;
+  height: auto;
+}
+.velora-post-gallery-4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.velora-post-gallery-tile {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: var(--velora-surface-soft);
+  cursor: zoom-in;
+  overflow: hidden;
+  display: block;
+  height: 160px;
+}
+.velora-post-gallery-1 .velora-post-gallery-tile { height: 240px; }
+.velora-post-gallery-tile img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .2s ease;
+}
+.velora-post-gallery-tile:hover img { transform: scale(1.03); }
+.velora-post-gallery-overflow {
+  position: absolute; inset: 0;
+  background: rgba(0, 0, 0, .55);
+  color: #fff; font-weight: 700; font-size: 1.5rem;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.velora-post-body { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+
+.velora-post-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.velora-post-date {
+  margin: 0;
+  font-size: .75rem;
+  color: var(--velora-text-muted);
+}
+
+.velora-post-preview {
+  margin: 0;
+  color: var(--velora-text-muted);
+  font-size: .9375rem;
+  line-height: 1.5;
+}
+
+.velora-post-link {
+  margin-top: .25rem;
+  align-self: flex-start;
+  color: var(--velora-accent);
+  text-decoration: none;
+  font-size: .875rem;
+  font-weight: 500;
+}
+.velora-post-link:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .velora-post { grid-template-columns: 1fr; }
+}
+
+/* ─ Documents ───────────────────────────────────────────── */
+
+.velora-doc-section { margin-bottom: 1.5rem; }
+.velora-doc-section:last-child { margin-bottom: 0; }
+
+.velora-doc-section-title {
+  margin: 0 0 .5rem;
+  font-size: .85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  opacity: .7;
+}
+
+.velora-doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.velora-doc {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: .75rem 1rem;
+  border: 1px solid var(--velora-border);
+  border-radius: var(--velora-radius);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.velora-doc:hover {
+  border-color: var(--velora-accent);
+  background: var(--velora-surface-soft);
+}
+
+.velora-doc-icon {
+  position: relative;
+  width: 36px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.velora-doc-icon svg {
+  display: block;
+  color: currentColor;
+  opacity: .55;
+}
+.velora-doc-ext {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: .55rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  padding: 1px 4px;
+  border-radius: 2px;
+  color: #fff;
+  background: var(--velora-doc-ext-color, #6b7280);
+  line-height: 1;
+}
+.velora-doc-meta { min-width: 0; display: flex; flex-direction: column; gap: .15rem; }
+.velora-doc-title { font-weight: 600; font-size: .95rem; }
+.velora-doc-desc { font-size: .8125rem; color: var(--velora-text-muted); }
+.velora-doc-info { font-size: .75rem; color: var(--velora-text-muted); font-family: ui-monospace, SFMono-Regular, monospace; }
+
+.velora-doc-download {
+  font-size: .8125rem;
+  color: var(--velora-accent);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ─ About widget ────────────────────────────────────────── */
+
+.velora-about {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.velora-about-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.velora-about-logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--velora-surface-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+
+.velora-about-header-body { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+.velora-about-title-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+
+.velora-about-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+}
+.velora-about-title:hover { color: var(--velora-accent); }
+
+.velora-about-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: .875rem;
+}
+
+.velora-about-meta-item { display: flex; flex-direction: column; gap: .15rem; }
+.velora-about-meta-label { font-size: .7rem; opacity: .65; text-transform: uppercase; letter-spacing: .03em; }
+.velora-about-meta-value { font-weight: 500; }
+
+.velora-about-description {
+  margin: 0;
+  font-size: .9375rem;
+  line-height: 1.6;
+  color: var(--velora-text-muted);
+}
+
+.velora-about-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: .875rem;
+}
+.velora-about-contact a { color: inherit; text-decoration: none; }
+.velora-about-contact a:hover { color: var(--velora-accent); text-decoration: underline; }
+
+.velora-about-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+@media (max-width: 600px) {
+  .velora-about-header { grid-template-columns: 1fr; text-align: center; }
+  .velora-about-logo { margin: 0 auto; }
+  .velora-about-title-row { justify-content: center; }
+  .velora-about-meta { justify-content: center; }
+}
+
+/* ─ Litter card ─────────────────────────────────────────── */
+
+.velora-card-litter {
+  border-color: var(--velora-border-strong);
+}
+
+/* ─ Responsive ──────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .velora-toolbar { flex-direction: column; align-items: stretch; }
+  .velora-toolbar-group { width: 100%; }
+  .velora-toolbar-select,
+  .velora-toolbar-input { width: 100%; }
+}

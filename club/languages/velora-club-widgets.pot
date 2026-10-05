@@ -1,0 +1,297 @@
+# Copyright (C) 2026 Velora
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Velora Club Widgets 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/velora-club-widgets\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-08-10T12:33:51+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: velora-club-widgets\n"
+
+#. Plugin Name of the plugin
+#: velora-club-widgets.php
+#: includes/view-settings.php:11
+msgid "Velora Club Widgets"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: velora-club-widgets.php
+msgid "https://velora.pet/"
+msgstr ""
+
+#. Description of the plugin
+#: velora-club-widgets.php
+msgid "Embed your Velora breeder club content (member breeders, gallery, listings, posts, events, documents, contact form) on your WordPress site."
+msgstr ""
+
+#. Author of the plugin
+#: velora-club-widgets.php
+msgid "Velora"
+msgstr ""
+
+#: includes/class-plugin.php:45
+msgid "Velora Club"
+msgstr ""
+
+#: includes/class-plugin.php:132
+msgid "Checking connection…"
+msgstr ""
+
+#. translators: %s is the club name returned by the Velora API.
+#: includes/class-plugin.php:134
+#, php-format
+msgid "Connected. Club: %s"
+msgstr ""
+
+#. translators: %s is the club name returned by the Velora API.
+#: includes/class-plugin.php:136
+#, php-format
+msgid "Club \"%s\" found, but no API key was entered — the contact form needs one and was not checked."
+msgstr ""
+
+#. translators: %s is the club slug entered in the settings form.
+#: includes/class-plugin.php:138
+#, php-format
+msgid "Slug \"%s\" does not exist. Check the spelling (compare it with the club profile URL in Velora)."
+msgstr ""
+
+#: includes/class-plugin.php:139
+msgid "The API key was rejected. Copy it again from the Velora panel, under Developers."
+msgstr ""
+
+#. translators: %s is the club slug entered in the settings form.
+#: includes/class-plugin.php:141
+#, php-format
+msgid "This API key belongs to a different organisation than \"%s\"."
+msgstr ""
+
+#: includes/class-plugin.php:142
+msgid "\"API base URL\" must be a full http:// or https:// address."
+msgstr ""
+
+#: includes/class-plugin.php:143
+msgid "The API server is not responding — check \"API base URL\"."
+msgstr ""
+
+#: includes/class-plugin.php:144
+msgid "The server returned an unexpected response — check that \"API base URL\" points to the Velora API."
+msgstr ""
+
+#: includes/class-plugin.php:145
+msgid "Network error"
+msgstr ""
+
+#: includes/class-plugin.php:146
+msgid "Enter the \"API base URL\"."
+msgstr ""
+
+#: includes/class-plugin.php:147
+msgid "Enter the \"Default club slug\"."
+msgstr ""
+
+#: includes/class-rest.php:25
+msgid "Could not reach Velora API."
+msgstr ""
+
+#: includes/class-rest.php:30
+msgid "Too many submissions. Try again later."
+msgstr ""
+
+#: includes/class-rest.php:35
+msgid "Plugin is not configured. Set API base and key in plugin settings."
+msgstr ""
+
+#: includes/view-settings.php:14
+msgid "Configure the connection to your Velora club. The API key is required only for contact form submissions; read-only widgets (member breeders, events) work without one."
+msgstr ""
+
+#: includes/view-settings.php:23
+msgid "API base URL"
+msgstr ""
+
+#: includes/view-settings.php:34
+msgid "Velora external API base."
+msgstr ""
+
+#: includes/view-settings.php:39
+msgid "Profile base URL"
+msgstr ""
+
+#: includes/view-settings.php:50
+msgid "Public Velora portal URL. Card/row clicks open profiles here."
+msgstr ""
+
+#: includes/view-settings.php:55
+msgid "Default club slug"
+msgstr ""
+
+#: includes/view-settings.php:70
+msgid "API key (for contact form)"
+msgstr ""
+
+#: includes/view-settings.php:83
+msgid "Generate in Velora: Settings → Developers → Create API key."
+msgstr ""
+
+#: includes/view-settings.php:89
+msgid "Language"
+msgstr ""
+
+#: includes/view-settings.php:104
+msgid "Show \"Powered by Velora\" link"
+msgstr ""
+
+#: includes/view-settings.php:117
+msgid "Off by default. When enabled, a small \"Powered by Velora\" link is shown under each widget on your public pages."
+msgstr ""
+
+#: includes/view-settings.php:125
+msgid "Test connection"
+msgstr ""
+
+#: includes/view-settings.php:129
+msgid "Checks the values entered above without saving them. If they work, click \"Save changes\"."
+msgstr ""
+
+#: includes/view-settings.php:140
+msgid "Available shortcodes"
+msgstr ""
+
+#: includes/view-settings.php:142
+msgid "member breeders list"
+msgstr ""
+
+#: includes/view-settings.php:143
+msgid "contact form — messages are delivered to your club inbox in Velora"
+msgstr ""
+
+#: includes/view-settings.php:147
+msgid "Optional attributes: slug=\"...\" limit=\"50\" theme=\"auto|light|dark\"."
+msgstr ""
+
+#: blocks/editor.js:16
+msgid "Auto"
+msgstr ""
+
+#: blocks/editor.js:17
+msgid "Light"
+msgstr ""
+
+#: blocks/editor.js:18
+msgid "Dark"
+msgstr ""
+
+#: blocks/editor.js:24
+msgid "Velora — Club"
+msgstr ""
+
+#: blocks/editor.js:32
+msgid "Club slug (override)"
+msgstr ""
+
+#: blocks/editor.js:33
+msgid "Leave empty to use the default from plugin settings."
+msgstr ""
+
+#: blocks/editor.js:38
+msgid "Theme"
+msgstr ""
+
+#: blocks/editor.js:47
+msgid "Limit"
+msgstr ""
+
+#: blocks/editor.js:72
+msgid "Velora embed widget — rendered on the front-end."
+msgstr ""
+
+#: blocks/editor.js:81
+msgid "Settings"
+msgstr ""
+
+#: blocks/editor.js:90
+msgid "Live widget content appears on the published page. Use the panel on the right to configure."
+msgstr ""
+
+#: blocks/editor.js:103
+msgid "Velora — About the club"
+msgstr ""
+
+#: blocks/editor.js:108
+msgid "Velora — Breeders"
+msgstr ""
+
+#: blocks/editor.js:120
+msgid "Layout"
+msgstr ""
+
+#: blocks/editor.js:123
+msgid "Auto (table for >20)"
+msgstr ""
+
+#: blocks/editor.js:124
+msgid "Cards"
+msgstr ""
+
+#: blocks/editor.js:125
+msgid "Table"
+msgstr ""
+
+#: blocks/editor.js:133
+msgid "Velora — Breeder listings"
+msgstr ""
+
+#: blocks/editor.js:142
+msgid "Velora — Club news"
+msgstr ""
+
+#: blocks/editor.js:151
+msgid "Velora — Club shows"
+msgstr ""
+
+#: blocks/editor.js:163
+msgid "When"
+msgstr ""
+
+#: blocks/editor.js:166
+msgid "Upcoming"
+msgstr ""
+
+#: blocks/editor.js:167
+msgid "Past"
+msgstr ""
+
+#: blocks/editor.js:168
+msgid "All"
+msgstr ""
+
+#: blocks/editor.js:173
+msgid "Show filter toolbar"
+msgstr ""
+
+#: blocks/editor.js:176
+msgid "Show"
+msgstr ""
+
+#: blocks/editor.js:177
+msgid "Hide"
+msgstr ""
+
+#: blocks/editor.js:185
+msgid "Velora — Gallery"
+msgstr ""
+
+#: blocks/editor.js:194
+msgid "Velora — Documents"
+msgstr ""
+
+#: blocks/editor.js:203
+msgid "Velora — Contact"
+msgstr ""

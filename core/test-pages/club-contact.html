@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="velora-api-base" content="http://localhost:4000">
+  <title>Club contact — test</title>
+  <link rel="stylesheet" href="/embed/embed.css">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    .warn { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: .75rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; font-size: .9em; }
+    code { background: rgba(0,0,0,.05); padding: 1px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <p><a href="/">← test pages index</a></p>
+  <h1>Klub Hodowców Elitarnych — kontakt</h1>
+  <p>Widget <code>club-contact</code> — formularz kontaktowy z routing-iem do działów (hodowlane / chipy / opłaty / ogólne).</p>
+
+  <div class="warn">
+    <strong>Wymaga klucza API.</strong> Uruchom <code>make wp-seed-keys</code> i wklej wygenerowany klucz w meta tagu poniżej.
+  </div>
+
+  <!-- <meta name="velora-api-key" content="vk_live_..."> -->
+
+  <div data-velora-widget="club-contact"
+       data-club="klub-hodowcow-elitarnych"></div>
+
+  <script src="/embed/embed.js"></script>
+</body>
+</html>

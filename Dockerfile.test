@@ -1,0 +1,9 @@
+FROM composer:2
+
+# linux-headers required by Xdebug build on Alpine
+RUN apk add --no-cache linux-headers $PHPIZE_DEPS \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && echo "xdebug.mode=coverage" > /usr/local/etc/php/conf.d/xdebug-coverage.ini \
+    && apk del $PHPIZE_DEPS \
+    && rm -rf /tmp/pear /root/.pearrc

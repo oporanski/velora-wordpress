@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="velora-api-base" content="http://localhost:4000">
+  <title>Breeder contact — test</title>
+  <link rel="stylesheet" href="/embed/embed.css">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    .warn { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: .75rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; font-size: .9em; }
+    code { background: rgba(0,0,0,.05); padding: 1px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <p><a href="/">← test pages index</a></p>
+  <h1>Royal Whiskers Cattery — kontakt</h1>
+  <p>Widget <code>breeder-contact</code> — formularz zapytania; wiadomość trafia do skrzynki hodowli w Velorze.</p>
+
+  <div class="warn">
+    <strong>Wymaga klucza API.</strong> W prod hodowca wygeneruje klucz w panelu Velora (Developers) i wklei go w ustawienia pluginu WP — tutaj ładujemy klucz z <code>window.VeloraEmbedConfig</code> jeżeli jest zainjectowany, albo z <code>&lt;meta name="velora-api-key"&gt;</code>.
+    <br>
+    Dla testu w dev: <code>make wp-seed-keys</code> wygeneruje klucze i wpisze je poniżej.
+  </div>
+
+  <!-- Uncomment after `make wp-seed-keys` — replace value with real key: -->
+  <!-- <meta name="velora-api-key" content="vk_live_..."> -->
+
+  <div data-velora-widget="breeder-contact"
+       data-breeder="royal-whiskers-cattery"></div>
+
+  <script src="/embed/embed.js"></script>
+</body>
+</html>

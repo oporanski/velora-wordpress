@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="velora-api-base" content="http://localhost:4000">
+  <meta name="velora-profile-base" content="http://localhost:5173">
+  <title>Club breeders — test</title>
+  <link rel="stylesheet" href="/embed/embed.css">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin-bottom: .25rem; }
+    .subtitle { color: #666; margin-top: 0; }
+  </style>
+</head>
+<body>
+  <p><a href="/">← test pages index</a></p>
+  <h1>Klub Hodowców Elitarnych</h1>
+  <p class="subtitle">Widget <code>club-breeders</code> — lista hodowców zrzeszonych w klubie.</p>
+
+  <div data-velora-widget="club-breeders"
+       data-club="klub-hodowcow-elitarnych"
+       data-limit="50"></div>
+
+  <script src="/embed/embed.js"></script>
+</body>
+</html>

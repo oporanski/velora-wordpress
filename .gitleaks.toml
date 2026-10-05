@@ -1,0 +1,38 @@
+# Gitleaks configuration for the Velora WordPress plugins repository.
+#
+# Without [extend] gitleaks starts with an EMPTY rule set whenever a --config is
+# passed (and it auto-loads this file when it sits next to --source). This block
+# is therefore the only reason the scan can find anything at all — do NOT remove
+# it. A config without it scans with zero rules and reports a clean result.
+#
+# Prove it can still go RED before trusting a green scan. Plant a credential the
+# default rules know (NOT a vendor "EXAMPLE" value — those are allowlisted
+# upstream) and check both that it is caught and that the tests/ waiver below
+# does not swallow it:
+#   printf 'GITHUB_TOKEN=ghp_016C7ceF7f0A1bB2cC3dD4eE5fF6a7B8c9D0e\n' > tests/_probe.txt
+#   gitleaks detect --no-git --no-banner --redact --source .   # must report 1 leak
+#   rm tests/_probe.txt
+[extend]
+  useDefault = true
+
+title = "Velora WP Plugins Gitleaks Config"
+
+# ---------------------------------------------------------------------------
+# `generic-api-key` is entropy-based: it fires on any long constant, credential
+# or not. The PHPUnit suite feeds the plugins fabricated API keys shaped exactly
+# like real ones (vk_live_abcdef1234567890 and friends) because that is the
+# input the code under test expects. Verified: that constant occurs ONLY in
+# files under tests/.
+#
+# Scoped to this one rule and this one directory, so a real provider key (AWS,
+# GitHub, Stripe, …) committed into tests/ is still caught.
+# ---------------------------------------------------------------------------
+[[allowlists]]
+  description = "generic-api-key: fabricated constants in the PHPUnit test suite"
+  targetRules = ["generic-api-key"]
+  # NOT anchored with ^: gitleaks reports paths relative to the repository in git
+  # mode but ABSOLUTE when scanning a directory (--no-git --source <dir>), so an
+  # anchored pattern silently stops matching depending on how the scan is invoked.
+  # Measured 2026-10-05: '^tests/' waived nothing in no-git mode.
+  # '__tests__/' (core/src) does not match this pattern — the waiver stays narrow.
+  paths = ['''(^|/)tests/''']
