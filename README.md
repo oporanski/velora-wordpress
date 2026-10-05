@@ -9,7 +9,7 @@ monorepo: it only *consumes* the portal's public API. The plugins default to
 `https://velora.pet` and call `/v1/...` on it; the same gateway also answers on
 `https://api.velora.pet`.
 What still ties the two together is written down in
-[`docs/relacja-z-portalem.md`](docs/relacja-z-portalem.md).
+[`docs/portal-integration.md`](docs/portal-integration.md).
 
 License: **GPL v2 or later** — `LICENSE` at the repository root, plus a
 byte-identical copy inside each plugin directory (WordPress.org wants one in
@@ -181,8 +181,7 @@ Publishing only copies the files into the portal's working tree. They reach
 users when the **portal** repository is committed and deployed.
 
 For WordPress.org itself the ZIP contents go to SVN (`trunk/` + `tags/<VERSION>/`);
-icons, banners and screenshots belong in SVN `/assets/`, not in the ZIP. The
-runbook is [`docs/wordpress-org-submission.md`](docs/wordpress-org-submission.md).
+icons, banners and screenshots belong in SVN `/assets/`, not in the ZIP.
 
 ## Available widgets
 
@@ -217,9 +216,5 @@ defaults to the value configured in plugin settings.
 
 ## Documentation
 
-- [`docs/relacja-z-portalem.md`](docs/relacja-z-portalem.md) — what still connects this repository to the portal
-- [`docs/wordpress-org-submission.md`](docs/wordpress-org-submission.md) — WordPress.org submission runbook
-- [`docs/wporg-independent-check-2026-08-10.md`](docs/wporg-independent-check-2026-08-10.md) — adversarial readiness audit (2026-08-10)
-
-Both of the last two files also exist in the portal repository, where they were
-written. This is their home from 2026-10-05 on; the portal's copies are history.
+- [`docs/portal-integration.md`](docs/portal-integration.md) — what connects this
+  repository to the Velora portal, and what the plugins deliberately cannot do

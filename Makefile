@@ -52,9 +52,8 @@ build-base:
 	@echo "  === build-base done ==="
 
 ## Alias for the monorepo-era name. Kept deliberately: `make wp-plugins-build` is
-## what docs/wporg-independent-check-2026-08-10.md, the plan documents and the
-## owner's own muscle memory say, and typing it into a repository that silently
-## has no such target reads like a broken checkout. Listed in `make help` so it
+## what older notes and the owner's muscle memory say, and typing it into a
+## repository that silently has no such target reads like a broken checkout. Listed in `make help` so it
 ## is discoverable rather than folklore. Not a compatibility shim for code — no
 ## script in this repository calls it; package-plugin.sh calls `build-base`.
 wp-plugins-build: build-base

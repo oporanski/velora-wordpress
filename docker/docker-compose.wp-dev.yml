@@ -10,7 +10,7 @@
 # Both WP services run the image tag matching the "Tested up to" header the plugins declare in
 # their readme.txt. That header is a claim the plugin was exercised on this version, and this stack
 # is the only thing that makes it true — pinned at 6.6 while the readmes said 7.0, it was not
-# (found 2026-08-10, docs/wporg-independent-check-2026-08-10.md F9). Bump both together.
+# (found by an independent readiness audit on 2026-08-10). Bump both together.
 #
 # Why MariaDB and not SQLite: the SQLite Database Integration plugin has a known bug where
 # INSERT with serialized PHP arrays into wp_usermeta (used for session_tokens) fails silently.
