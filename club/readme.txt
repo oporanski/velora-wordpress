@@ -4,7 +4,7 @@ Tags:              club, federation, cattery, kennel, pedigree
 Requires at least: 6.0
 Tested up to:      7.0
 Requires PHP:      7.4
-Stable tag:        1.0.0
+Stable tag:        1.1.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,7 @@ Embed your Velora breeder club content on WordPress — member breeders list, ph
 * **Events** — exhibitions, shows and meetings (with upcoming / past filter)
 * **Documents** — regulations, application forms, statute, fee schedules — grouped by category
 * **Contact form** — delivers the visitor's message to your club's Velora inbox
+* **Club members' area** — a short sign-in panel that sends your members to their own Velora account
 
 All widgets are theme-neutral — they pick up your WordPress theme's typography and colors automatically.
 
@@ -42,8 +43,9 @@ All widgets are theme-neutral — they pick up your WordPress theme's typography
 `[velora-club-events]`
 `[velora-club-documents]`
 `[velora-club-contact]`
+`[velora-club-member-area]`
 
-Most shortcodes accept optional `slug=`, `limit=`, `theme="auto|light|dark"`. Exceptions: `[velora-club-about]` and `[velora-club-contact]` do not accept `limit=`; `[velora-club-breeders]` also accepts `layout="auto|cards|table"`; `[velora-club-gallery]` uses `photos_per_album=` instead of `limit=`; `[velora-club-events]` also accepts `when="upcoming|past|all"` and `show_filter="true|false"`.
+Most shortcodes accept optional `slug=`, `limit=`, `theme="auto|light|dark"`. Exceptions: `[velora-club-about]` and `[velora-club-contact]` do not accept `limit=`; `[velora-club-member-area]` accepts neither `slug=` nor `limit=` — it shows no club data, so it takes only `heading=`, `text=` and `theme=`; `[velora-club-breeders]` also accepts `layout="auto|cards|table"`; `[velora-club-gallery]` uses `photos_per_album=` instead of `limit=`; `[velora-club-events]` also accepts `when="upcoming|past|all"` and `show_filter="true|false"`.
 
 = Migrating from a manually-maintained breeder list =
 
@@ -119,11 +121,22 @@ Yes — your club must have a profile at https://velora.pet/.
 
 Yes. Use `[velora-club-events when="upcoming"]` (this is the default). For an archive page use `when="past"`. Set `show_filter="false"` to hide the toolbar.
 
+= How do my members sign in? =
+
+Add `[velora-club-member-area]` to a page — usually "For members" or similar. It renders a short explanation of what Velora is and a button that opens the Velora sign-in page in a new browser window, so your club page stays open behind it. There are also links for members who have no account yet and for a forgotten password.
+
+The panel is plain static text and links: it contacts no server, needs no API key and works even before you have configured one. Reword the heading and the paragraph with `heading="…"` and `text="…"`, or in the block editor's sidebar.
+
 = Will widgets match my club website's branding? =
 
 Yes — they use `color: inherit` and CSS custom properties so they pick up your WordPress theme's colors. Force a specific palette with `theme="light"` or `theme="dark"`.
 
 == Changelog ==
+
+= 1.1.0 =
+* New widget: **Club members' area** (`[velora-club-member-area]` and a matching block) — a static sign-in panel that explains what Velora is and points members at their own account. Makes no API request and loads no JavaScript.
+* Editable heading and text, so each club can word the invitation in its own voice.
+* Links to the portal open in a new window and announce that to screen readers.
 
 = 1.0.0 =
 * Initial public release on the WordPress.org plugin directory.
@@ -133,6 +146,9 @@ Yes — they use `color: inherit` and CSS custom properties so they pick up your
 * Contact form is submitted through a server-side proxy on your own WordPress site — your Velora API key never reaches the visitor's browser.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Adds the Club members' area panel. Nothing existing changes.
 
 = 1.0.0 =
 First public release on the WordPress.org plugin directory.

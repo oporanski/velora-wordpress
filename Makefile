@@ -121,7 +121,7 @@ coverage: build-base
 	@echo "  === Coverage threshold check ==="
 	@python3 scripts/check-coverage-threshold.py \
 		tests/reports/clover.xml \
-		--lines=99.77 --methods=100
+		--lines=99.78 --methods=100
 	@echo "  === WP Plugins coverage done ==="
 	@echo "    tests/reports/clover.xml"
 

@@ -2,7 +2,7 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Velora Club Widgets 1.0.0\n"
+"Project-Id-Version: Velora Club Widgets 1.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/velora-club-widgets\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -294,4 +294,57 @@ msgstr ""
 
 #: blocks/editor.js:203
 msgid "Velora — Contact"
+msgstr ""
+
+#: includes/class-plugin.php:402
+msgid "Club members’ area"
+msgstr ""
+
+#: includes/class-plugin.php:407
+msgid "Velora is the portal your club runs its paperwork in — a service for breeders and owners of purebred animals. Sign in there with the account your club keeps for you and everything of yours is in one place: your cattery and your animals, the applications you have sent to the club, your membership, and the club’s calendar. The portal opens in a new window, so this page stays open behind it."
+msgstr ""
+
+#: includes/class-plugin.php:218
+msgid "(opens in a new window)"
+msgstr ""
+
+#: includes/class-plugin.php:421
+msgid "Sign in to Velora"
+msgstr ""
+
+#: includes/class-plugin.php:428
+msgid "No account yet? Create one"
+msgstr ""
+
+#: includes/class-plugin.php:433
+msgid "Forgot your password?"
+msgstr ""
+
+#: blocks/editor.js:213
+#: blocks/editor.js:252
+msgid "Velora — Club members’ area"
+msgstr ""
+
+#: blocks/editor.js:214
+msgid "Static panel inviting club members to sign in to Velora. Makes no API request."
+msgstr ""
+
+#: blocks/editor.js:230
+msgid "Heading"
+msgstr ""
+
+#: blocks/editor.js:231
+msgid "Leave empty to use the built-in heading."
+msgstr ""
+
+#: blocks/editor.js:236
+msgid "Text"
+msgstr ""
+
+#: blocks/editor.js:237
+msgid "Leave empty to use the built-in explanation of what Velora is."
+msgstr ""
+
+#: blocks/editor.js:253
+msgid "The sign-in panel appears on the published page. Use the panel on the right to reword it."
 msgstr ""
