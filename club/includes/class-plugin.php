@@ -405,7 +405,7 @@ class Velora_Club_Plugin extends Velora_Club_Base_Plugin
         $text = (string) $atts['text'];
         if ($text === '') {
             $text = __(
-                'Velora is the portal your club runs its paperwork in — a service for breeders and owners of purebred animals. Sign in there with the account your club keeps for you and everything of yours is in one place: your cattery and your animals, the applications you have sent to the club, your membership, and the club’s calendar. The portal opens in a new window, so this page stays open behind it.',
+                'Velora is a portal for breeders and owners of purebred animals, and it is where your club keeps its paperwork. Sign in with the account your club has for you and your own things are in one place: your cattery and your animals, your litters, and the people interested in them — alongside the application you sent to the club and your membership. The portal opens in a new window, so this page stays open behind it.',
                 'velora-club-widgets'
             );
         }

@@ -295,7 +295,18 @@ class ClubShortcodesTest extends TestCase
         $html = Velora_Club_Plugin::shortcode_member_area([]);
 
         self::assertStringContainsString('[[velora-club-widgets|Club members’ area]]', $html);
-        self::assertStringContainsString('[[velora-club-widgets|Velora is the portal your club runs', $html);
+        // The body copy is asserted by its WRAPPER, not by its wording: a club
+        // rewording the default sentence must not redden a test about the
+        // translator. The marker opening right after the paragraph tag is what
+        // proves the string went through __() with this plugin's domain.
+        // One word of the default copy, not the sentence: enough to catch an empty
+        // default (which would render an empty paragraph on the club's public page
+        // with nothing to report it), while a club rewording the rest still cannot
+        // redden a test about the translator.
+        self::assertStringContainsString(
+            '<p class="velora-member-area-text">[[velora-club-widgets|Velora ',
+            $html,
+        );
         self::assertStringContainsString('[[velora-club-widgets|Sign in to Velora]]', $html);
         self::assertStringContainsString('[[velora-club-widgets|No account yet? Create one]]', $html);
         self::assertStringContainsString('[[velora-club-widgets|Forgot your password?]]', $html);

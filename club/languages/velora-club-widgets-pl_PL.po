@@ -300,8 +300,8 @@ msgid "Club members’ area"
 msgstr "Strefa klubowa"
 
 #: includes/class-plugin.php:407
-msgid "Velora is the portal your club runs its paperwork in — a service for breeders and owners of purebred animals. Sign in there with the account your club keeps for you and everything of yours is in one place: your cattery and your animals, the applications you have sent to the club, your membership, and the club’s calendar. The portal opens in a new window, so this page stays open behind it."
-msgstr "Velora to portal, w którym klub prowadzi swoje sprawy — serwis dla hodowców i właścicieli zwierząt rasowych. Zaloguj się tam kontem, które klub ma dla Ciebie, i wszystko Twoje masz w jednym miejscu: Twoją hodowlę i Twoje zwierzęta, zgłoszenia wysłane do klubu, Twoje członkostwo i kalendarz klubu. Portal otworzy się w nowym oknie, więc ta strona zostanie otwarta w tle."
+msgid "Velora is a portal for breeders and owners of purebred animals, and it is where your club keeps its paperwork. Sign in with the account your club has for you and your own things are in one place: your cattery and your animals, your litters, and the people interested in them — alongside the application you sent to the club and your membership. The portal opens in a new window, so this page stays open behind it."
+msgstr "Velora to portal dla hodowców i właścicieli zwierząt rasowych, a zarazem miejsce, w którym Twój klub prowadzi swoje sprawy. Zaloguj się kontem, które klub ma dla Ciebie, a wszystko Twoje masz w jednym miejscu: Twoją hodowlę i Twoje zwierzęta, Twoje mioty i osoby nimi zainteresowane — a obok tego zgłoszenie wysłane do klubu i Twoje członkostwo. Portal otworzy się w nowym oknie, więc ta strona zostanie otwarta w tle."
 
 #: includes/class-plugin.php:218
 msgid "(opens in a new window)"
