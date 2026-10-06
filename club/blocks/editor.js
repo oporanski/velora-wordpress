@@ -9,7 +9,7 @@
   const { registerBlockType } = wp.blocks;
   const { createElement: el, Fragment } = wp.element;
   const { InspectorControls, useBlockProps } = wp.blockEditor || wp.editor;
-  const { PanelBody, TextControl, SelectControl, RangeControl, Placeholder } = wp.components;
+  const { PanelBody, TextControl, TextareaControl, SelectControl, RangeControl, Placeholder } = wp.components;
   const { __ } = wp.i18n;
 
   const themeOptions = [
@@ -203,5 +203,58 @@
   makeBlock('velora-club/contact', __('Velora — Contact', 'velora-club-widgets'), {
     icon: 'email',
     attributes: { slug: { type: 'string', default: '' }, theme: { type: 'string', default: 'auto' } },
+  });
+
+  // Registered on its own rather than through makeBlock(): this block takes no
+  // club slug and no limit, because it reads nothing from the API. What it does
+  // take is wording, so the club can phrase the invitation in its own voice.
+  registerBlockType('velora-club/member-area', {
+    apiVersion: 2,
+    title: __('Velora — Club members’ area', 'velora-club-widgets'),
+    description: __('Static panel inviting club members to sign in to Velora. Makes no API request.', 'velora-club-widgets'),
+    icon: 'lock',
+    category: 'velora-club',
+    supports: { html: false, align: ['wide', 'full'] },
+    attributes: {
+      heading: { type: 'string', default: '' },
+      text: { type: 'string', default: '' },
+      theme: { type: 'string', default: 'auto' },
+    },
+    edit: function (props) {
+      const { attributes, setAttributes } = props;
+      const blockProps = useBlockProps ? useBlockProps({ className: 'velora-block-placeholder' }) : {};
+      return el(Fragment, null,
+        el(InspectorControls, null,
+          el(PanelBody, { title: __('Settings', 'velora-club-widgets'), initialOpen: true },
+            el(TextControl, {
+              label: __('Heading', 'velora-club-widgets'),
+              help: __('Leave empty to use the built-in heading.', 'velora-club-widgets'),
+              value: attributes.heading || '',
+              onChange: function (v) { setAttributes({ heading: v }); },
+            }),
+            el(TextareaControl, {
+              label: __('Text', 'velora-club-widgets'),
+              help: __('Leave empty to use the built-in explanation of what Velora is.', 'velora-club-widgets'),
+              value: attributes.text || '',
+              onChange: function (v) { setAttributes({ text: v }); },
+            }),
+            el(SelectControl, {
+              label: __('Theme', 'velora-club-widgets'),
+              value: attributes.theme || 'auto',
+              options: themeOptions,
+              onChange: function (v) { setAttributes({ theme: v }); },
+            })
+          )
+        ),
+        el('div', blockProps,
+          el(Placeholder, {
+            icon: 'lock',
+            label: __('Velora — Club members’ area', 'velora-club-widgets'),
+            instructions: __('The sign-in panel appears on the published page. Use the panel on the right to reword it.', 'velora-club-widgets'),
+          })
+        )
+      );
+    },
+    save: function () { return null; },
   });
 })(window.wp);

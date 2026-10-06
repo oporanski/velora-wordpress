@@ -157,6 +157,195 @@ class ClubShortcodesTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
+    // shortcode_member_area — a STATIC panel: no API call, no bundle, no slug
+    // -----------------------------------------------------------------------
+
+    /**
+     * Renders the members' area with the escaping functions stubbed.
+     *
+     * @param array<string,string> $atts        Shortcode attributes.
+     * @param string               $profileBase Stored velora_club_profile_base value.
+     */
+    private function renderMemberArea(array $atts = [], string $profileBase = 'https://portal.example'): string
+    {
+        Functions\when('get_option')->alias(
+            fn($option, $default = '') => $option === 'velora_club_profile_base' ? $profileBase : $default
+        );
+        Functions\when('__')->returnArg(1);
+        Functions\when('esc_html')->alias('htmlspecialchars');
+        Functions\when('esc_url')->returnArg(1);
+
+        return Velora_Club_Plugin::shortcode_member_area($atts);
+    }
+
+    public function test_member_area_keeps_the_line_breaks_a_club_typed(): void
+    {
+        // The editor offers a textarea, so a club writing two paragraphs must get
+        // two paragraphs. Without nl2br the browser collapses the newline into a
+        // space and the panel reads as one run-on line.
+        $html = $this->renderMemberArea(['text' => "First line.\n\nSecond line."]);
+
+        self::assertStringContainsString('First line.<br />', $html);
+        self::assertStringContainsString('Second line.', $html);
+    }
+
+    public function test_member_area_escapes_before_it_inserts_line_breaks(): void
+    {
+        // nl2br must run AFTER esc_html. The reverse order is not an XSS hole —
+        // esc_html would escape nl2br's own <br /> along with everything else —
+        // but it does destroy the line break, so this pins the order down.
+        $html = $this->renderMemberArea(['text' => "<script>alert(1)</script>\nnext"]);
+
+        self::assertStringNotContainsString('<script>', $html);
+        self::assertStringContainsString('&lt;script&gt;', $html);
+        self::assertStringContainsString('<br />', $html);
+    }
+
+    public function test_member_area_main_action_points_at_the_configured_portal(): void
+    {
+        $html = $this->renderMemberArea();
+
+        self::assertStringContainsString(
+            'href="https://portal.example/login?redirect=%2Fmy-panels"',
+            $html,
+        );
+    }
+
+    public function test_member_area_falls_back_to_the_public_portal_when_option_is_empty(): void
+    {
+        // get_option()'s default argument does not cover an option stored as '',
+        // which is what a settings page saved without the field leaves behind.
+        $html = $this->renderMemberArea([], '');
+
+        self::assertStringContainsString(
+            'href="https://velora.pet/login?redirect=%2Fmy-panels"',
+            $html,
+        );
+    }
+
+    public function test_member_area_does_not_double_the_slash_on_a_trailing_slash_option(): void
+    {
+        $html = $this->renderMemberArea([], 'https://velora.pet/');
+
+        self::assertStringContainsString('href="https://velora.pet/login?redirect=%2Fmy-panels"', $html);
+        self::assertStringNotContainsString('velora.pet//login', $html);
+    }
+
+    public function test_member_area_opens_the_portal_in_a_new_window_safely(): void
+    {
+        $html = $this->renderMemberArea();
+
+        // target="_blank" without rel="noopener" hands the opened page a live
+        // window.opener reference back into the club's site.
+        self::assertStringContainsString('target="_blank"', $html);
+        self::assertStringContainsString('rel="noopener noreferrer"', $html);
+    }
+
+    public function test_member_area_offers_registration_and_password_recovery(): void
+    {
+        $html = $this->renderMemberArea();
+
+        self::assertStringContainsString('href="https://portal.example/register?redirect=%2Fmy-panels"', $html);
+        self::assertStringContainsString('href="https://portal.example/forgot-password"', $html);
+        // Every portal link opens a new window, so every one needs the guard.
+        self::assertSame(3, substr_count($html, 'rel="noopener noreferrer"'));
+        self::assertSame(3, substr_count($html, 'target="_blank"'));
+    }
+
+    public function test_member_area_renders_no_widget_mount_point(): void
+    {
+        // data-velora-widget is embed.js's mount point. This panel is static
+        // markup — a mount point here would make the bundle try to hydrate it.
+        self::assertStringNotContainsString('data-velora-widget', $this->renderMemberArea());
+    }
+
+    public function test_member_area_enqueues_the_stylesheet_but_not_the_bundle(): void
+    {
+        $scripts = [];
+        $styles  = [];
+        Functions\when('wp_enqueue_script')->alias(function ($handle) use (&$scripts) {
+            $scripts[] = $handle;
+        });
+        Functions\when('wp_enqueue_style')->alias(function ($handle) use (&$styles) {
+            $styles[] = $handle;
+        });
+
+        $this->renderMemberArea();
+
+        self::assertSame([], $scripts, 'The bundle has nothing to hydrate here and must stay off the page');
+        self::assertSame(['velora-club-embed-core'], $styles, 'The markup uses the shared .velora-w tokens');
+    }
+
+    /**
+     * Every visible string must reach the reader through the translator.
+     *
+     * The stub marks each translated string with its text domain, so a
+     * hard-coded literal shows up as a missing marker rather than as text that
+     * merely happens to be English.
+     */
+    public function test_member_area_sends_every_visible_string_through_the_translator(): void
+    {
+        Functions\when('get_option')->justReturn('https://portal.example');
+        Functions\when('esc_html')->alias('htmlspecialchars');
+        Functions\when('esc_url')->returnArg(1);
+        Functions\when('__')->alias(
+            fn($text, $domain = '') => '[[' . $domain . '|' . $text . ']]'
+        );
+
+        $html = Velora_Club_Plugin::shortcode_member_area([]);
+
+        self::assertStringContainsString('[[velora-club-widgets|Club members’ area]]', $html);
+        self::assertStringContainsString('[[velora-club-widgets|Velora is the portal your club runs', $html);
+        self::assertStringContainsString('[[velora-club-widgets|Sign in to Velora]]', $html);
+        self::assertStringContainsString('[[velora-club-widgets|No account yet? Create one]]', $html);
+        self::assertStringContainsString('[[velora-club-widgets|Forgot your password?]]', $html);
+        // The hidden hint is the only thing telling a screen-reader user that
+        // the link replaces nothing — it is a visible string too.
+        self::assertSame(3, substr_count($html, '[[velora-club-widgets|(opens in a new window)]]'));
+    }
+
+    public function test_member_area_uses_the_attributes_instead_of_the_defaults(): void
+    {
+        $html = $this->renderMemberArea([
+            'heading' => 'Dla członków klubu',
+            'text'    => 'Nasz klub prowadzi papiery w Velorze.',
+        ]);
+
+        self::assertStringContainsString('<h2 class="velora-member-area-title">Dla członków klubu</h2>', $html);
+        self::assertStringContainsString('Nasz klub prowadzi papiery w Velorze.', $html);
+        self::assertStringNotContainsString('Club members', $html);
+        self::assertStringNotContainsString('Velora is the portal', $html);
+    }
+
+    public function test_member_area_escapes_xss_in_heading_and_text(): void
+    {
+        $html = $this->renderMemberArea([
+            'heading' => '"><script>alert(1)</script>',
+            'text'    => '<img src=x onerror=alert(2)>',
+        ]);
+
+        self::assertStringNotContainsString('<script>', $html);
+        self::assertStringNotContainsString('<img', $html);
+    }
+
+    public function test_member_area_maps_the_theme_attribute_onto_an_explicit_class(): void
+    {
+        self::assertStringContainsString(
+            'class="velora-w velora-member-area velora-w-explicit-light"',
+            $this->renderMemberArea(['theme' => 'light']),
+        );
+        self::assertStringContainsString(
+            'class="velora-w velora-member-area velora-w-explicit-dark"',
+            $this->renderMemberArea(['theme' => 'dark']),
+        );
+        // "auto" means "inherit the host theme", so it adds nothing.
+        self::assertStringContainsString(
+            'class="velora-w velora-member-area"',
+            $this->renderMemberArea(['theme' => 'auto']),
+        );
+    }
+
+    // -----------------------------------------------------------------------
     // XSS protection
     // -----------------------------------------------------------------------
 
@@ -179,8 +368,17 @@ class ClubShortcodesTest extends TestCase
         Functions\when('add_action')->alias(function ($hook, $callback) use (&$registeredActions) {
             $registeredActions[$hook] = $callback;
         });
-        Functions\stubs(['add_shortcode']);
+        $registeredShortcodes = [];
+        Functions\when('add_shortcode')->alias(function ($tag, $callback) use (&$registeredShortcodes) {
+            $registeredShortcodes[$tag] = $callback;
+        });
         Velora_Club_Plugin::init();
+
+        self::assertSame(
+            [Velora_Club_Plugin::class, 'shortcode_member_area'],
+            $registeredShortcodes['velora-club-member-area'] ?? null,
+            'The members\' area shortcode has to be registered or the block renders nothing',
+        );
 
         // Bundled .mo files are invisible to WordPress until load_plugin_textdomain()
         // registers the plugin's languages/ directory — see load_textdomain().

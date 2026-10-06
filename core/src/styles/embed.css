@@ -870,3 +870,71 @@
   .velora-toolbar-select,
   .velora-toolbar-input { width: 100%; }
 }
+
+/* ─ Screen-reader-only text ─────────────────────────────── */
+
+/*
+ * Visually hidden, still announced. Used to append "(opens in a new window)"
+ * to links that leave the host site: a sighted visitor sees the label alone,
+ * a screen-reader user is told the page will not be replaced.
+ * Not scoped under .velora-w — a hidden span may sit in any of our markup.
+ */
+.velora-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─ Club members' area ──────────────────────────────────── */
+
+.velora-member-area {
+  border: 1px solid var(--velora-border);
+  border-radius: var(--velora-radius);
+  padding: 1.5rem;
+  background: var(--velora-surface-soft);
+}
+
+.velora-member-area-title {
+  margin: 0 0 .5rem;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+.velora-member-area-text {
+  margin: 0 0 1.25rem;
+  max-width: 65ch;
+  line-height: 1.6;
+}
+
+.velora-member-area-actions {
+  margin: 0 0 .75rem;
+}
+
+/* .velora-btn is written for <button>; an anchor needs these two. */
+.velora-member-area-cta,
+.velora-member-area-cta:hover {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.velora-member-area-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem 1.25rem;
+  margin: 0;
+  font-size: .875rem;
+}
+
+/* The underline is explicit: a host theme that strips underlines from <a> would
+   leave these two links indistinguishable from body text until hover. */
+.velora-member-area-link {
+  color: inherit;
+  text-decoration: underline;
+}
+.velora-member-area-link:hover { color: var(--velora-accent); }

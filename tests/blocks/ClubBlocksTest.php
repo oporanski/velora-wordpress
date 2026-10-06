@@ -39,7 +39,14 @@ class ClubBlocksTest extends TestCase
         parent::setUp();
         Monkey\setUp();
         Functions\stubs(['add_action']);
-        Functions\when('esc_attr')->alias('htmlspecialchars');
+        // $double_encode = false mirrors the real esc_attr(), which calls
+        // _wp_specialchars($text, ENT_QUOTES) and so leaves an existing entity
+        // alone. Bare htmlspecialchars() double-encodes, which would turn the
+        // bracket entities this suite asserts on into '&amp;#91;' and hide
+        // whether they survive at all.
+        Functions\when('esc_attr')->alias(
+            fn($text) => htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8', false)
+        );
         // Reset the blocks capture global before each test.
         global $velora_test_registered_blocks;
         $velora_test_registered_blocks = [];
@@ -70,11 +77,11 @@ class ClubBlocksTest extends TestCase
     // register_blocks()
     // -----------------------------------------------------------------------
 
-    public function test_register_blocks_registers_eight_blocks(): void
+    public function test_register_blocks_registers_nine_blocks(): void
     {
         global $velora_test_registered_blocks;
         Velora_Club_Blocks::register_blocks();
-        self::assertCount(8, $velora_test_registered_blocks);
+        self::assertCount(9, $velora_test_registered_blocks);
         self::assertArrayHasKey('velora-club/about',     $velora_test_registered_blocks);
         self::assertArrayHasKey('velora-club/breeders',  $velora_test_registered_blocks);
         self::assertArrayHasKey('velora-club/listings',  $velora_test_registered_blocks);
@@ -83,6 +90,73 @@ class ClubBlocksTest extends TestCase
         self::assertArrayHasKey('velora-club/documents', $velora_test_registered_blocks);
         self::assertArrayHasKey('velora-club/gallery',   $velora_test_registered_blocks);
         self::assertArrayHasKey('velora-club/contact',   $velora_test_registered_blocks);
+        self::assertArrayHasKey('velora-club/member-area', $velora_test_registered_blocks);
+    }
+
+    /**
+     * The members' area takes wording, not a slug or a limit: it reads nothing
+     * from the API, so a slug attribute would be a control that does nothing.
+     */
+    public function test_member_area_block_exposes_exactly_its_three_attributes(): void
+    {
+        global $velora_test_registered_blocks;
+        Velora_Club_Blocks::register_blocks();
+
+        $attributes = $velora_test_registered_blocks['velora-club/member-area']['attributes'];
+        self::assertSame(['heading', 'text', 'theme'], array_keys($attributes));
+        self::assertSame('', $attributes['heading']['default']);
+        self::assertSame('', $attributes['text']['default']);
+        self::assertSame('auto', $attributes['theme']['default']);
+    }
+
+    public function test_member_area_block_delegates_to_its_shortcode(): void
+    {
+        $callbacks = $this->captureCallbacks();
+        Functions\when('do_shortcode')->returnArg(1);
+
+        $result = $callbacks['velora-club/member-area']['render_callback']([
+            'heading' => 'Dla członków',
+            'theme'   => 'dark',
+        ]);
+
+        self::assertStringContainsString('[velora-club-member-area', $result);
+        self::assertStringContainsString('heading="Dla członków"', $result);
+        self::assertStringContainsString('theme="dark"', $result);
+    }
+
+    /**
+     * WordPress ends a shortcode tag at the first "]", and esc_attr() leaves
+     * brackets alone — so a bracket typed into this block's free-prose fields
+     * used to truncate the tag and drop every attribute after it, leaving the
+     * tail as visible text on the club's public page (measured on WP 7.0.2).
+     *
+     * Asserting the bracket COUNT rather than the rendered output is deliberate:
+     * do_shortcode() is stubbed here, so the real parser never runs. "Exactly
+     * one of each" is precisely the property the parser needs in order to see
+     * the whole tag, and it fails the moment the neutralisation is removed.
+     */
+    public function test_member_area_block_neutralises_brackets_in_prose_attributes(): void
+    {
+        $callbacks = $this->captureCallbacks();
+        Functions\when('do_shortcode')->returnArg(1);
+
+        $result = $callbacks['velora-club/member-area']['render_callback']([
+            'heading' => 'Members [area] only',
+            'text'    => 'See [the rules] first',
+            'theme'   => 'auto',
+        ]);
+
+        self::assertSame(1, substr_count($result, '['), $result);
+        self::assertSame(1, substr_count($result, ']'), $result);
+        // The brackets must be ENCODED, not dropped: a club that typed them has
+        // to read them back. Real WordPress renumbers these to '&#091;'/'&#093;'
+        // (wp_kses_normalize_entities zero-pads numeric references, measured on
+        // 7.0.2); either spelling renders as a bracket.
+        self::assertStringContainsString('heading="Members &#91;area&#93; only"', $result);
+        // Both attributes still travel — the tag was not cut short.
+        self::assertStringContainsString('heading="Members ', $result);
+        self::assertStringContainsString('text="See ', $result);
+        self::assertStringContainsString('theme="auto"', $result);
     }
 
     public function test_register_blocks_each_has_callable_render_callback(): void

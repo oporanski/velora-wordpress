@@ -29,6 +29,13 @@ portal's public gateway:
 and this repository has no way to know. The contract is unwritten — treat
 `core/src/api-client.ts` as its specification.
 
+One widget is deliberately outside that dependency: the club plugin's members'
+area (`[velora-club-member-area]`) is static markup with links to the portal's
+`/login`, `/register` and `/forgot-password` pages. It calls no API, mounts
+nothing for `embed.js` and loads only the stylesheet — so it keeps working on a
+site whose API key was never configured. What it does depend on is those three
+routes continuing to exist, plus `/my-panels` as the post-login destination.
+
 ## 2. Releases go through WordPress.org, not through velora.pet
 
 `make wp-package` builds a distribution ZIP per plugin into `dist/`. Those ZIPs

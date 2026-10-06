@@ -159,6 +159,77 @@ class Velora_Club_Plugin extends Velora_Club_Base_Plugin
         add_shortcode('velora-club-posts',     [self::class, 'shortcode_posts']);
         add_shortcode('velora-club-documents', [self::class, 'shortcode_documents']);
         add_shortcode('velora-club-gallery',   [self::class, 'shortcode_gallery']);
+        add_shortcode('velora-club-member-area', [self::class, 'shortcode_member_area']);
+    }
+
+    // -----------------------------------------------------------------------
+    // Helpers for the static members' area block
+    // -----------------------------------------------------------------------
+
+    /**
+     * Public portal base URL for member-facing links, with no trailing slash.
+     *
+     * Reuses the option the embed bundle already uses for profile links, so a
+     * site pointed at a staging portal keeps every link consistent. The option
+     * is sometimes stored as an empty string (a settings page saved while the
+     * field was absent), hence the explicit empty check next to the default:
+     * get_option()'s default only covers a missing option, not an empty one.
+     * rtrim() keeps a configured "https://velora.pet/" from producing "//login".
+     */
+    private static function portal_base(): string
+    {
+        $base = (string) get_option(self::OPTION_PROFILE_BASE, '');
+
+        return rtrim($base !== '' ? $base : 'https://velora.pet', '/');
+    }
+
+    /**
+     * Enqueues the stylesheet only, deliberately leaving the bundle alone.
+     *
+     * The members' area is static markup: it carries no data-velora-widget
+     * mount point, so embed.js would find nothing to hydrate and its CAPTCHA
+     * wasm payload would be pure dead weight on the page. The stylesheet is
+     * still needed — the markup is built from the shared .velora-w tokens.
+     *
+     * Mirrors ensure_assets_enqueued() in the base class minus the script.
+     */
+    private static function ensure_styles_only(): void
+    {
+        $handle = static::asset_handle();
+        if (!wp_style_is($handle, 'enqueued')) {
+            wp_enqueue_style($handle);
+        }
+    }
+
+    /**
+     * Builds one portal link that opens in a new browser window.
+     *
+     * target="_blank" without rel="noopener" hands the opened page a usable
+     * window.opener reference, so both always travel together here. The hidden
+     * suffix is what tells a screen-reader user the link leaves this page —
+     * the new window is otherwise announced by nothing at all.
+     */
+    private static function portal_link(string $url, string $label, string $class): string
+    {
+        return '<a class="' . esc_attr($class) . '" href="' . esc_url($url) . '"'
+            . ' target="_blank" rel="noopener noreferrer">'
+            . esc_html($label)
+            . '<span class="velora-sr-only"> '
+            . esc_html(__('(opens in a new window)', 'velora-club-widgets'))
+            . '</span></a>';
+    }
+
+    /** Maps the theme attribute onto the explicit-theme class, if any. */
+    private static function theme_class(string $theme): string
+    {
+        if ($theme === 'light') {
+            return ' velora-w-explicit-light';
+        }
+        if ($theme === 'dark') {
+            return ' velora-w-explicit-dark';
+        }
+
+        return '';
     }
 
     // -----------------------------------------------------------------------
@@ -306,5 +377,67 @@ class Velora_Club_Plugin extends Velora_Club_Base_Plugin
             'data-photos-per-album' => (string) intval($atts['photos_per_album']),
             'data-theme'            => $atts['theme'],
         ]);
+    }
+
+    /**
+     * Static sign-in panel pointing club members at their Velora account.
+     *
+     * Intentionally renders no mount point and loads no bundle: there is
+     * nothing here to fetch, so a club page carrying only this block makes no
+     * API request at all. heading and text are editable so a club can word it
+     * in its own voice; empty values fall back to the translated defaults.
+     */
+    public static function shortcode_member_area($atts): string
+    {
+        $atts = shortcode_atts([
+            'heading' => '',
+            'text'    => '',
+            'theme'   => 'auto',
+        ], $atts, 'velora-club-member-area');
+
+        self::ensure_styles_only();
+
+        $heading = (string) $atts['heading'];
+        if ($heading === '') {
+            $heading = __('Club members’ area', 'velora-club-widgets');
+        }
+
+        $text = (string) $atts['text'];
+        if ($text === '') {
+            $text = __(
+                'Velora is the portal your club runs its paperwork in — a service for breeders and owners of purebred animals. Sign in there with the account your club keeps for you and everything of yours is in one place: your cattery and your animals, the applications you have sent to the club, your membership, and the club’s calendar. The portal opens in a new window, so this page stays open behind it.',
+                'velora-club-widgets'
+            );
+        }
+
+        $portal = self::portal_base();
+
+        return '<div class="velora-w velora-member-area' . esc_attr(self::theme_class((string) $atts['theme'])) . '">'
+            . '<h2 class="velora-member-area-title">' . esc_html($heading) . '</h2>'
+            // nl2br AFTER esc_html, never before: the escaping has to see the raw
+            // text, and the <br /> it then inserts is the only markup we add. The
+            // editor offers a textarea, so the line breaks a club typed survive as
+            // line breaks instead of collapsing into one run-on line.
+            . '<p class="velora-member-area-text">' . nl2br(esc_html($text)) . '</p>'
+            . '<p class="velora-member-area-actions">'
+            . self::portal_link(
+                $portal . '/login?redirect=%2Fmy-panels',
+                __('Sign in to Velora', 'velora-club-widgets'),
+                'velora-btn velora-member-area-cta'
+            )
+            . '</p>'
+            . '<p class="velora-member-area-links">'
+            . self::portal_link(
+                $portal . '/register?redirect=%2Fmy-panels',
+                __('No account yet? Create one', 'velora-club-widgets'),
+                'velora-member-area-link'
+            )
+            . self::portal_link(
+                $portal . '/forgot-password',
+                __('Forgot your password?', 'velora-club-widgets'),
+                'velora-member-area-link'
+            )
+            . '</p>'
+            . '</div>';
     }
 }

@@ -30,6 +30,9 @@ class PluginIsolationTest extends TestCase
         Functions\when('wp_style_is')->justReturn(false);
         Functions\when('get_option')->justReturn('');
         Functions\when('rest_url')->returnArg(1);
+        Functions\when('__')->returnArg(1);
+        Functions\when('esc_html')->alias('htmlspecialchars');
+        Functions\when('esc_url')->returnArg(1);
     }
 
     protected function tearDown(): void
@@ -119,6 +122,14 @@ class PluginIsolationTest extends TestCase
             foreach ($callbacks as $tag => $callback) {
                 self::assertIsCallable($callback, $tag);
                 $html = $callback([]);
+                // A shortcode that renders static markup has no mount point and
+                // therefore names no config global. The pairing is asserted both
+                // ways round so this branch cannot quietly swallow a real mount
+                // point whose config global went missing.
+                if (!str_contains($html, 'data-velora-widget')) {
+                    self::assertStringNotContainsString('data-velora-config', $html, $tag);
+                    continue;
+                }
                 self::assertStringContainsString(
                     'data-velora-config="' . $configGlobal . '"',
                     $html,
