@@ -144,8 +144,8 @@ msgid "contact form — messages are delivered to your club inbox in Velora"
 msgstr "formularz kontaktowy — wiadomości trafiają do skrzynki klubu w Velorze"
 
 #: includes/view-settings.php:147
-msgid "Optional attributes: slug=\"...\" limit=\"50\" theme=\"auto|light|dark\"."
-msgstr "Opcjonalne atrybuty: slug=\"...\" limit=\"50\" theme=\"auto|light|dark\"."
+msgid "Optional attributes: slug=\"...\" limit=\"50\" theme=\"auto|light|dark\". The breeders list also takes per_page=\"50\" (breeders shown per page, \"all\" turns paging off); its limit is how many breeders to fetch in total (default 500)."
+msgstr "Opcjonalne atrybuty: slug=\"...\" limit=\"50\" theme=\"auto|light|dark\". Lista hodowli przyjmuje także per_page=\"50\" (ile hodowli na stronie, \"all\" wyłącza stronicowanie); jej limit to łączna liczba pobieranych hodowli (domyślnie 500)."
 
 #: blocks/editor.js:16
 msgid "Auto"
@@ -198,6 +198,14 @@ msgstr "Velora — O klubie"
 #: blocks/editor.js:108
 msgid "Velora — Breeders"
 msgstr "Velora — Hodowle"
+
+#: blocks/editor.js:121
+msgid "Breeders per page"
+msgstr "Hodowli na stronie"
+
+#: blocks/editor.js:122
+msgid "A number, or \"all\" to show every breeder without paging."
+msgstr "Liczba albo „all”, aby pokazać wszystkich hodowców bez stronicowania."
 
 #: blocks/editor.js:120
 msgid "Layout"

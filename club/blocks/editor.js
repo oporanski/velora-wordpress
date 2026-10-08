@@ -47,7 +47,7 @@
           label: __('Limit', 'velora-club-widgets'),
           value: attributes.limit || opts.defaultLimit || 12,
           min: 1,
-          max: 200,
+          max: opts.limitMax || 200,
           onChange: function (v) { setAttributes({ limit: v }); },
         })
       );
@@ -107,15 +107,22 @@
 
   makeBlock('velora-club/breeders', __('Velora — Breeders', 'velora-club-widgets'), {
     icon: 'pets',
-    showLimit: true, defaultLimit: 200,
+    showLimit: true, defaultLimit: 500, limitMax: 500,
     attributes: {
       slug: { type: 'string', default: '' },
-      limit: { type: 'number', default: 200 },
+      limit: { type: 'number', default: 500 },
+      per_page: { type: 'string', default: '50' },
       layout: { type: 'string', default: 'auto' },
       theme: { type: 'string', default: 'auto' },
     },
     extraControls: function (props) {
       return [
+        el(TextControl, {
+          label: __('Breeders per page', 'velora-club-widgets'),
+          help: __('A number, or "all" to show every breeder without paging.', 'velora-club-widgets'),
+          value: props.attributes.per_page || '50',
+          onChange: function (v) { props.setAttributes({ per_page: v }); },
+        }),
         el(SelectControl, {
           label: __('Layout', 'velora-club-widgets'),
           value: props.attributes.layout || 'auto',

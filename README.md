@@ -209,6 +209,10 @@ icons, banners and screenshots belong in SVN `/assets/`, not in the ZIP.
 All shortcodes accept optional `slug=`, `limit=`, `theme=auto|light|dark`. Slug
 defaults to the value configured in plugin settings.
 
+`[velora-club-breeders]` additionally takes `per_page=` (default `50`; `all` turns
+paging off). The two numbers differ: `limit=` (default `500`) is how many breeders are
+fetched in total, `per_page=` is how many are shown on one page of the list.
+
 > **🔒 Privacy:** Litter data (planned matings, expected dates, kitten counts
 > before placement) is **private breeder business intelligence** and is **never**
 > exposed via the public embed. There is no `/v1/breeders/:slug/litters` route —

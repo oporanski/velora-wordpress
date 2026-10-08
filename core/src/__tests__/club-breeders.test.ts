@@ -282,3 +282,120 @@ describe('ClubBreedersWidget', () => {
     expect(root.querySelector('.velora-state-empty')).not.toBeNull()
   })
 })
+
+describe('ClubBreedersWidget paging', () => {
+  beforeEach(() => {
+    fetchMock.mockReset()
+    vi.stubGlobal('fetch', fetchMock)
+    document.body.replaceChildren()
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  function manyBreeders(n: number): RawClubBreeder[] {
+    return Array.from({ length: n }, (_, i) =>
+      buildBreeder({ id: `b-${i}`, slug: `c-${i}`, name: `Cattery ${String(i).padStart(3, '0')}` }),
+    )
+  }
+
+  async function mountPaged(perPage?: string): Promise<HTMLElement> {
+    mockBreeders(manyBreeders(80))
+    const root = document.createElement('div')
+    root.setAttribute('data-club', 'baltic-feline')
+    if (perPage !== undefined) root.setAttribute('data-per-page', perPage)
+    document.body.appendChild(root)
+    await new ClubBreedersWidget(root, CONFIG).mount()
+    return root
+  }
+
+  const rowCount = (root: HTMLElement): number => root.querySelectorAll('.velora-table tbody tr').length
+  const count = (root: HTMLElement): string => root.querySelector('.velora-toolbar-count')?.textContent ?? ''
+  const click = (root: HTMLElement, selector: string): void =>
+    (root.querySelector(selector) as HTMLElement).click()
+
+  it('shows 50 rows and a two-page pager for 80 breeders', async () => {
+    const root = await mountPaged('50')
+    expect(rowCount(root)).toBe(50)
+    expect(root.querySelectorAll('.velora-pager-page')).toHaveLength(2)
+    expect(count(root)).toBe('Showing 1–50 of 80')
+  })
+
+  it('defaults to 50 per page without the attribute', async () => {
+    const root = await mountPaged()
+    expect(rowCount(root)).toBe(50)
+  })
+
+  it('falls back to 50 when data-per-page is not a number', async () => {
+    const root = await mountPaged('lots')
+    expect(rowCount(root)).toBe(50)
+  })
+
+  it('moves to the remaining 30 on next', async () => {
+    const root = await mountPaged('50')
+    click(root, '.velora-pager-next')
+    expect(rowCount(root)).toBe(30)
+    expect(count(root)).toBe('Showing 51–80 of 80')
+    expect(root.querySelector('.velora-table tbody tr a')?.textContent).toContain('Cattery 050')
+  })
+
+  it('scrolls the widget into view after a page change when the browser can', async () => {
+    const root = await mountPaged('50')
+    const scroll = vi.fn()
+    root.scrollIntoView = scroll
+    click(root, '.velora-pager-next')
+    expect(scroll).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' })
+  })
+
+  it('shows everything and no pager for data-per-page="all"', async () => {
+    for (const value of ['all', 'ALL', '0']) {
+      const root = await mountPaged(value)
+      expect(rowCount(root)).toBe(80)
+      expect(root.querySelector('.velora-pager')).toBeNull()
+      expect(count(root)).toBe('Showing: 80')
+    }
+  })
+
+  it('returns to page 1 when the sort changes', async () => {
+    const root = await mountPaged('50')
+    click(root, '.velora-pager-next')
+    const select = root.querySelector('.velora-toolbar-select') as HTMLSelectElement
+    select.value = 'name:desc'
+    select.dispatchEvent(new Event('change'))
+    expect(count(root)).toBe('Showing 1–50 of 80')
+    expect(root.querySelector('.velora-table tbody tr a')?.textContent).toContain('Cattery 079')
+  })
+
+  it('returns to page 1 when the layout changes', async () => {
+    const root = await mountPaged('50')
+    click(root, '.velora-pager-next')
+    click(root, '.velora-toolbar-layout button')
+    expect(count(root)).toBe('Showing 1–50 of 80')
+  })
+
+  it('returns to page 1 when a column header re-sorts the table', async () => {
+    const root = await mountPaged('50')
+    click(root, '.velora-pager-next')
+    click(root, '.velora-table th')
+    expect(count(root)).toBe('Showing 1–50 of 80')
+  })
+
+  it('returns to page 1 when a filter changes', async () => {
+    mockBreeders([
+      ...manyBreeders(60).map((b) => ({ ...b, region: 'A' })),
+      ...manyBreeders(20).map((b, i) => ({ ...b, id: `r-${i}`, slug: `r-${i}`, region: 'B' })),
+    ])
+    const root = document.createElement('div')
+    root.setAttribute('data-club', 'baltic-feline')
+    document.body.appendChild(root)
+    await new ClubBreedersWidget(root, CONFIG).mount()
+    click(root, '.velora-pager-next')
+    const regionSelect = Array.from(root.querySelectorAll('.velora-toolbar-select'))
+      .find((s) => Array.from((s as HTMLSelectElement).options).some((o) => o.value === 'B')) as HTMLSelectElement
+    regionSelect.value = 'B'
+    regionSelect.dispatchEvent(new Event('change'))
+    expect(rowCount(root)).toBe(20)
+    expect(root.querySelector('.velora-pager')).toBeNull()
+  })
+})

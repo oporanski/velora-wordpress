@@ -119,7 +119,7 @@ describe('ApiClient', () => {
       global.fetch = fetchMock
       await makeClient().getClubBreeders('my-club', 50)
       expect(fetchMock).toHaveBeenCalledWith(
-        'https://api.velora.pet/v1/clubs/my-club/breeders?limit=50',
+        'https://api.velora.pet/v1/clubs/my-club/breeders?limit=50&page=1',
         expect.anything(),
       )
     })

@@ -4,7 +4,7 @@ Tags:              club, federation, cattery, kennel, pedigree
 Requires at least: 6.0
 Tested up to:      7.0
 Requires PHP:      7.4
-Stable tag:        1.2.0
+Stable tag:        1.3.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,7 +45,7 @@ All widgets are theme-neutral — they pick up your WordPress theme's typography
 `[velora-club-contact]`
 `[velora-club-member-area]`
 
-Most shortcodes accept optional `slug=`, `limit=`, `theme="auto|light|dark"`. Exceptions: `[velora-club-about]` and `[velora-club-contact]` do not accept `limit=`; `[velora-club-member-area]` accepts neither `slug=` nor `limit=` — it shows no club data, so it takes only `heading=`, `text=` and `theme=`; `[velora-club-breeders]` also accepts `layout="auto|cards|table"`; `[velora-club-gallery]` uses `photos_per_album=` instead of `limit=`; `[velora-club-events]` also accepts `when="upcoming|past|all"` and `show_filter="true|false"` and `show_poster="true|false"`.
+Most shortcodes accept optional `slug=`, `limit=`, `theme="auto|light|dark"`. Exceptions: `[velora-club-about]` and `[velora-club-contact]` do not accept `limit=`; `[velora-club-member-area]` accepts neither `slug=` nor `limit=` — it shows no club data, so it takes only `heading=`, `text=` and `theme=`; `[velora-club-breeders]` also accepts `layout="auto|cards|table"` and `per_page=` (breeders shown on one page of the list, default 50; `per_page="all"` turns paging off) — its `limit=` is how many breeders are fetched in total (default 500), not how many are shown at once; `[velora-club-gallery]` uses `photos_per_album=` instead of `limit=`; `[velora-club-events]` also accepts `when="upcoming|past|all"` and `show_filter="true|false"` and `show_poster="true|false"`.
 
 = Migrating from a manually-maintained breeder list =
 
@@ -133,6 +133,11 @@ Yes — they use `color: inherit` and CSS custom properties so they pick up your
 
 == Changelog ==
 
+= 1.3.0 =
+* The member breeders list no longer stops at 50. Velora serves the list in batches, and the widget now walks every batch, so a club with 80 or 150 member breeders shows all of them.
+* The list is split into pages with navigation below it (previous / page numbers / next), and the counter names the range it is showing: "Showing 1–50 of 80".
+* New `per_page="50"` attribute (and a block setting) for how many breeders appear on one page. Use `per_page="all"` to drop paging and print the whole list at once. The `limit` attribute now means something different: how many breeders to fetch from Velora in total (default 500).
+
 = 1.2.0 =
 * The events widget shows the poster of the nearest upcoming event above the list, whole and uncropped. It picks the earliest event that has a poster and is not over yet, and links to its page on Velora.
 * New `show_poster="true|false"` attribute (and a block setting) to turn the poster off. Default: on.
@@ -150,6 +155,9 @@ Yes — they use `color: inherit` and CSS custom properties so they pick up your
 * Contact form is submitted through a server-side proxy on your own WordPress site — your Velora API key never reaches the visitor's browser.
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+Fixes the member breeders list cutting off at 50 entries. Clubs with more breeders now get the whole list, split into pages of 50; set per_page to change that or to "all" for one long list.
 
 = 1.2.0 =
 The events widget now shows the next event's poster above the list. Add show_poster="false" to the shortcode to keep the old look.

@@ -2,6 +2,17 @@ import { Widget, getAttr } from './base'
 import type { ClubBreeder } from '../api-client'
 import { normalizeBreeds } from '../breeds'
 import { imgSrc } from '../image'
+import { buildPager, clampPage, pageCount, pageSlice } from './pager'
+
+const DEFAULT_PER_PAGE = 50
+
+/** `all` or a non-positive number means "no paging" (0); garbage falls back to the default. */
+function parsePerPage(raw: string): number {
+  if (raw.trim().toLowerCase() === 'all') return 0
+  const n = Number(raw)
+  if (!Number.isFinite(n) || raw.trim() === '') return DEFAULT_PER_PAGE
+  return n <= 0 ? 0 : Math.floor(n)
+}
 
 type Layout = 'auto' | 'cards' | 'table'
 type SortKey = 'name' | 'city'
@@ -12,6 +23,7 @@ interface FilterState {
   sort: SortKey
   sortDir: 'asc' | 'desc'
   layout: 'cards' | 'table'
+  page: number
 }
 
 export class ClubBreedersWidget extends Widget {
@@ -19,10 +31,12 @@ export class ClubBreedersWidget extends Widget {
   private state!: FilterState
   private breedOptions: string[] = []
   private regionOptions: string[] = []
+  private perPage = DEFAULT_PER_PAGE
 
   async mount(): Promise<void> {
     const slug = getAttr(this.ctx.root, 'data-club')
-    const limit = Number(getAttr(this.ctx.root, 'data-limit', '200')) || 200
+    const limit = Number(getAttr(this.ctx.root, 'data-limit', '500')) || 500
+    this.perPage = parsePerPage(getAttr(this.ctx.root, 'data-per-page', String(DEFAULT_PER_PAGE)))
     const layoutAttr = (getAttr(this.ctx.root, 'data-layout', 'auto') as Layout)
 
     if (!slug) {
@@ -49,6 +63,7 @@ export class ClubBreedersWidget extends Widget {
         sortDir: 'asc',
         // Auto: table for >20 entries (balticfeline-style), cards for fewer.
         layout: layoutAttr === 'auto' ? this.resolveAutoLayout() : layoutAttr,
+        page: 1,
       }
       this.render()
     } catch (e) {
@@ -90,21 +105,52 @@ export class ClubBreedersWidget extends Widget {
 
   private render(): void {
     const list = this.filteredAndSorted()
+    const pages = pageCount(list.length, this.perPage)
+    this.state.page = clampPage(this.state.page, pages)
+    const visible = pageSlice(list, this.state.page, this.perPage)
     const wrap = document.createElement('div')
-    wrap.appendChild(this.buildToolbar(list.length))
+    wrap.appendChild(this.buildToolbar(list.length, visible.length, pages))
     if (list.length === 0) {
       const empty = this.createDiv('velora-state velora-state-empty')
       empty.appendChild(this.createEl('p', undefined, this.ctx.t('empty')))
       wrap.appendChild(empty)
     } else if (this.state.layout === 'table') {
-      wrap.appendChild(this.buildTable(list))
+      wrap.appendChild(this.buildTable(visible))
     } else {
-      wrap.appendChild(this.buildGrid(list))
+      wrap.appendChild(this.buildGrid(visible))
     }
+    if (pages > 1) wrap.appendChild(this.buildPagerNav(pages))
     this.ctx.root.replaceChildren(wrap, this.buildFooter())
   }
 
-  private buildToolbar(visibleCount: number): HTMLElement {
+  private buildPagerNav(pages: number): HTMLElement {
+    const t = this.ctx.t
+    return buildPager({
+      current: this.state.page,
+      pages,
+      labels: {
+        nav: t('pagerNav'),
+        prev: t('pagerPrev'),
+        next: t('pagerNext'),
+        page: (n) => t('pagerPage').replace('{n}', String(n)),
+      },
+      onGo: (page) => {
+        this.state.page = page
+        this.render()
+        if (typeof this.ctx.root.scrollIntoView === 'function') {
+          this.ctx.root.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      },
+    })
+  }
+
+  /** Any change to what is listed (filter, sort, layout) starts again from page 1. */
+  private resetAndRender(): void {
+    this.state.page = 1
+    this.render()
+  }
+
+  private buildToolbar(totalCount: number, shownCount: number, pages: number): HTMLElement {
     const t = this.ctx.t
     const toolbar = this.createDiv('velora-toolbar')
 
@@ -113,14 +159,14 @@ export class ClubBreedersWidget extends Widget {
       toolbar.appendChild(this.buildSelect(t('filterBreed'), this.state.breed, [
         { value: '', label: t('filterAll') },
         ...this.breedOptions.map((b) => ({ value: b, label: b })),
-      ], (v) => { this.state.breed = v; this.render() }))
+      ], (v) => { this.state.breed = v; this.resetAndRender() }))
     }
 
     if (this.regionOptions.length > 1) {
       toolbar.appendChild(this.buildSelect(t('filterRegion'), this.state.region, [
         { value: '', label: t('filterAll') },
         ...this.regionOptions.map((r) => ({ value: r, label: r })),
-      ], (v) => { this.state.region = v; this.render() }))
+      ], (v) => { this.state.region = v; this.resetAndRender() }))
     }
 
     toolbar.appendChild(this.buildSelect(t('sortBy'), `${this.state.sort}:${this.state.sortDir}`, [
@@ -131,13 +177,20 @@ export class ClubBreedersWidget extends Widget {
       const [k, d] = v.split(':') as [SortKey, 'asc' | 'desc']
       this.state.sort = k
       this.state.sortDir = d
-      this.render()
+      this.resetAndRender()
     }))
 
     const spacer = this.createDiv('velora-toolbar-spacer')
     toolbar.appendChild(spacer)
 
-    const count = this.createEl('span', 'velora-toolbar-count', t('countShowing').replace('{n}', String(visibleCount)))
+    const from = (this.state.page - 1) * this.perPage + 1
+    const countText = pages > 1
+      ? t('countRange')
+          .replace('{from}', String(from))
+          .replace('{to}', String(from + shownCount - 1))
+          .replace('{total}', String(totalCount))
+      : t('countShowing').replace('{n}', String(totalCount))
+    const count = this.createEl('span', 'velora-toolbar-count', countText)
     toolbar.appendChild(count)
 
     toolbar.appendChild(this.buildLayoutSwitch())
@@ -175,7 +228,7 @@ export class ClubBreedersWidget extends Widget {
       const btn = this.createEl('button', undefined, label)
       btn.type = 'button'
       btn.setAttribute('aria-pressed', String(this.state.layout === layout))
-      btn.addEventListener('click', () => { this.state.layout = layout; this.render() })
+      btn.addEventListener('click', () => { this.state.layout = layout; this.resetAndRender() })
       return btn
     }
     wrap.appendChild(mkBtn('cards', t('layoutCards')))
@@ -251,7 +304,7 @@ export class ClubBreedersWidget extends Widget {
             this.state.sort = k
             this.state.sortDir = 'asc'
           }
-          this.render()
+          this.resetAndRender()
         })
       } else {
         th.style.cursor = 'default'

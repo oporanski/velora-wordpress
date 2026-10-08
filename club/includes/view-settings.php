@@ -144,6 +144,6 @@ if (!defined('ABSPATH')) {
     </ul>
 
     <p>
-        <?php esc_html_e('Optional attributes: slug="..." limit="50" theme="auto|light|dark".', 'velora-club-widgets'); ?>
+        <?php esc_html_e('Optional attributes: slug="..." limit="50" theme="auto|light|dark". The breeders list also takes per_page="50" (breeders shown per page, "all" turns paging off); its limit is how many breeders to fetch in total (default 500).', 'velora-club-widgets'); ?>
     </p>
 </div>

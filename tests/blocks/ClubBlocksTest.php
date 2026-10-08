@@ -93,6 +93,26 @@ class ClubBlocksTest extends TestCase
         self::assertArrayHasKey('velora-club/member-area', $velora_test_registered_blocks);
     }
 
+    public function test_breeders_block_exposes_per_page_and_fetch_limit_defaults(): void
+    {
+        global $velora_test_registered_blocks;
+        Velora_Club_Blocks::register_blocks();
+
+        $attributes = $velora_test_registered_blocks['velora-club/breeders']['attributes'];
+        self::assertSame('string', $attributes['per_page']['type']);
+        self::assertSame('50', $attributes['per_page']['default']);
+        self::assertSame(500, $attributes['limit']['default']);
+    }
+
+    public function test_breeders_block_forwards_per_page_to_the_shortcode(): void
+    {
+        $callbacks = $this->captureCallbacks();
+        Functions\when('do_shortcode')->returnArg(1);
+
+        $result = $callbacks['velora-club/breeders']['render_callback'](['slug' => 'gff', 'per_page' => 'all']);
+        self::assertStringContainsString('per_page="all"', $result);
+    }
+
     /**
      * The members' area takes wording, not a slug or a limit: it reads nothing
      * from the API, so a slug attribute would be a control that does nothing.
