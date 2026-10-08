@@ -268,12 +268,15 @@ class Velora_Club_Plugin extends Velora_Club_Base_Plugin
 
         self::ensure_assets_enqueued();
 
-        $per_page = strtolower(trim((string) $atts['per_page']));
         // Only the literal "all" turns paging off. Anything that is not a
         // positive count — a typo, a negative, a zero — falls back to the
         // default, because silently showing one endless page is the very
         // failure this attribute exists to fix.
-        $per_page = $per_page === 'all' ? 'all' : (string) (intval($per_page) > 0 ? intval($per_page) : 50);
+        $per_page = strtolower(trim((string) $atts['per_page']));
+        if ($per_page !== 'all') {
+            $count    = intval($per_page);
+            $per_page = (string) ($count > 0 ? $count : 50);
+        }
 
         return self::widget_markup('club-breeders', [
             'data-club'     => $atts['slug'],

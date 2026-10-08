@@ -223,6 +223,35 @@ function prefixAssetUrls<T>(value: T, base: string): T {
 /** Upper bound on requests per club-breeders fetch (50 rows each in production). */
 const MAX_BREEDER_PAGES = 20
 
+/**
+ * Appends the rows of `batch` whose `id` has not been taken yet, at most `room`
+ * of them, and reports how many it added. `seen` grows row by row, so a page
+ * that repeats an id within itself still yields that breeder once.
+ */
+function collectNew<T extends { id: string }>(
+  batch: T[],
+  seen: Set<string>,
+  out: T[],
+  room: number,
+): number {
+  let added = 0
+  for (const row of batch) {
+    if (added >= room) break
+    if (seen.has(row.id)) continue
+    seen.add(row.id)
+    out.push(row)
+    added++
+  }
+  return added
+}
+
+/** True once the server has nothing left to give after this batch. */
+function isFinalPage<T>(body: PaginatedResponse<T>, batch: T[], gathered: number): boolean {
+  const pageSize = body.limit ?? batch.length
+  if (batch.length < pageSize) return true
+  return typeof body.total === 'number' && gathered >= body.total
+}
+
 export class ApiClient {
   constructor(private readonly config: VeloraConfig) {}
 
@@ -253,21 +282,11 @@ export class ApiClient {
         `${this.config.apiBase}/v1/clubs/${encodeURIComponent(slug)}/breeders?limit=${limit}&page=${page}`,
       )
       const batch = body.data ?? []
-      if (batch.length === 0) break
-      let added = 0
-      for (const row of batch) {
-        if (out.length >= limit) break
-        if (seen.has(row.id)) continue
-        seen.add(row.id)
-        out.push(row)
-        added++
-      }
-      // A page with nothing new means the server ignores `page` and keeps
-      // returning the same rows; without this stop the loop would spin on them.
-      if (added === 0) break
-      const pageSize = body.limit ?? batch.length
-      if (batch.length < pageSize) break
-      if (typeof body.total === 'number' && out.length >= body.total) break
+      // An empty page, and a page holding nothing we had not already taken,
+      // both end the walk. The second case means the server ignores `page` and
+      // keeps handing back the same rows; without this stop we would spin.
+      if (collectNew(batch, seen, out, limit - out.length) === 0) break
+      if (isFinalPage(body, batch, out.length)) break
     }
     return out
   }

@@ -95,4 +95,34 @@ describe('ApiClient.getClubBreeders paging', () => {
     expect(fetchMock).toHaveBeenCalledTimes(20)
     expect(out).toHaveLength(20 * SERVER_PAGE_SIZE)
   })
+  // A club whose membership query joins badly can repeat a breeder inside one
+  // page. Deduplication has to happen row by row: a batch-wide filter would
+  // read `seen` as it stood BEFORE the page and let both copies through.
+  it('yields a breeder once even when a single page repeats it', async () => {
+    const [a, b, c] = rows(3)
+    global.fetch = vi.fn(() =>
+      Promise.resolve(respond({ data: [a, b, a, c], total: 4, page: 1, limit: 50 })),
+    ) as unknown as typeof fetch
+    const out = await new ApiClient(CONFIG).getClubBreeders('club')
+    expect(out.map((r) => r.id)).toEqual([a.id, b.id, c.id])
+  })
+
+  it('does not let a repeat inside a page eat into the limit', async () => {
+    const [a, b, c] = rows(3)
+    global.fetch = vi.fn(() =>
+      Promise.resolve(respond({ data: [a, a, b, c], total: 4, page: 1, limit: 50 })),
+    ) as unknown as typeof fetch
+    const out = await new ApiClient(CONFIG).getClubBreeders('club', 2)
+    expect(out.map((r) => r.id)).toEqual([a.id, b.id])
+  })
+
+  // `total` lands exactly on a page boundary, so the short-page rule never
+  // fires: without the total check the walk would spend one pointless request.
+  it('stops on the declared total instead of asking for an empty page', async () => {
+    const fetchMock = cappedServer(100)
+    global.fetch = fetchMock as unknown as typeof fetch
+    const out = await new ApiClient(CONFIG).getClubBreeders('club', 500)
+    expect(out).toHaveLength(100)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
 })
