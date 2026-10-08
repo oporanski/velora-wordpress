@@ -293,6 +293,7 @@ class Velora_Club_Plugin extends Velora_Club_Base_Plugin
             'limit'       => 12,
             'when'        => 'upcoming',
             'show_filter' => 'true',
+            'show_poster' => 'true',
             'theme'       => 'auto',
         ], $atts, 'velora-club-events');
 
@@ -304,6 +305,7 @@ class Velora_Club_Plugin extends Velora_Club_Base_Plugin
             'data-limit'       => (string) intval($atts['limit']),
             'data-when'        => $atts['when'],
             'data-show-filter' => $atts['show_filter'],
+            'data-show-poster' => $atts['show_poster'],
             'data-theme'       => $atts['theme'],
         ]);
     }

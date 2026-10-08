@@ -100,6 +100,33 @@ class ClubShortcodesTest extends TestCase
         self::assertStringContainsString('data-velora-widget="events"', $html);
     }
 
+    public function test_shortcode_events_defaults_when_filter_and_poster(): void
+    {
+        Functions\when('get_option')->justReturn('');
+
+        $html = Velora_Club_Plugin::shortcode_events(['slug' => 'gff']);
+
+        self::assertStringContainsString('data-when="upcoming"', $html);
+        self::assertStringContainsString('data-show-filter="true"', $html);
+        self::assertStringContainsString('data-show-poster="true"', $html);
+    }
+
+    public function test_shortcode_events_passes_when_filter_and_poster_through(): void
+    {
+        Functions\when('get_option')->justReturn('');
+
+        $html = Velora_Club_Plugin::shortcode_events([
+            'slug'        => 'gff',
+            'when'        => 'past',
+            'show_filter' => 'false',
+            'show_poster' => 'false',
+        ]);
+
+        self::assertStringContainsString('data-when="past"', $html);
+        self::assertStringContainsString('data-show-filter="false"', $html);
+        self::assertStringContainsString('data-show-poster="false"', $html);
+    }
+
     // -----------------------------------------------------------------------
     // shortcode_documents (club-specific — no breeder equivalent)
     // -----------------------------------------------------------------------

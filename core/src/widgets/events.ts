@@ -2,6 +2,7 @@ import { Widget, getAttr } from './base'
 import type { VeloraEvent } from '../api-client'
 import { injectEventsJsonLd } from '../seo'
 import { imgSrc } from '../image'
+import { pickFeaturedPoster } from '../pick-featured-poster'
 
 type WhenFilter = 'upcoming' | 'past' | 'all'
 
@@ -17,7 +18,8 @@ interface State {
  *        data-source="breeders"
  *        data-slug="..."
  *        data-when="upcoming|past|all"
- *        data-show-filter="true|false"></div>
+ *        data-show-filter="true|false"
+ *        data-show-poster="true|false"></div>
  */
 export class EventsWidget extends Widget {
   private source!: 'breeders' | 'clubs'
@@ -25,6 +27,7 @@ export class EventsWidget extends Widget {
   private limit!: number
   private state!: State
   private showFilter!: boolean
+  private showPoster!: boolean
 
   async mount(): Promise<void> {
     this.source = getAttr(this.ctx.root, 'data-source') as 'breeders' | 'clubs'
@@ -33,6 +36,7 @@ export class EventsWidget extends Widget {
     const when = (getAttr(this.ctx.root, 'data-when', 'upcoming') as WhenFilter)
     this.state = { when: ['upcoming', 'past', 'all'].includes(when) ? when : 'upcoming' }
     this.showFilter = getAttr(this.ctx.root, 'data-show-filter', 'true') !== 'false'
+    this.showPoster = getAttr(this.ctx.root, 'data-show-poster', 'true') !== 'false'
 
     if (!this.slug || (this.source !== 'breeders' && this.source !== 'clubs')) {
       this.renderError('Required: data-source="breeders|clubs" + data-slug="..."')
@@ -56,6 +60,8 @@ export class EventsWidget extends Widget {
   private render(events: VeloraEvent[]): void {
     const wrap = document.createElement('div')
     if (this.showFilter) wrap.appendChild(this.buildFilter())
+    const poster = this.buildPoster(events)
+    if (poster) wrap.appendChild(poster)
 
     if (events.length === 0) {
       const empty = this.createDiv('velora-state velora-state-empty')
@@ -71,6 +77,30 @@ export class EventsWidget extends Widget {
 
     this.ctx.root.replaceChildren(wrap, this.buildFooter())
     if (events.length > 0) injectEventsJsonLd(this.ctx.root, events)
+  }
+
+  /**
+   * Poster of the nearest upcoming event, shown whole above the list. Club
+   * pages only — this widget is shared with the breeder plugin, which keeps
+   * its plain card grid. Stays out when the event has no page to link to.
+   */
+  private buildPoster(events: VeloraEvent[]): HTMLElement | null {
+    if (!this.showPoster || this.source !== 'clubs' || this.state.when !== 'upcoming') return null
+    const event = pickFeaturedPoster(events)
+    if (!event?.slug || !event.imageUrl) return null
+
+    const link = document.createElement('a')
+    link.className = 'velora-event-poster'
+    link.href = `${this.ctx.config.profileBase}/events/${encodeURIComponent(event.slug)}`
+    link.target = '_blank'
+    link.rel = 'noopener noreferrer'
+    const img = document.createElement('img')
+    img.className = 'velora-event-poster-img'
+    img.src = imgSrc(event.imageUrl, 'lg')
+    img.alt = event.title
+    img.loading = 'lazy'
+    link.appendChild(img)
+    return link
   }
 
   private buildFilter(): HTMLElement {

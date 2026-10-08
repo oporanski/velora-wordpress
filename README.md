@@ -202,7 +202,7 @@ icons, banners and screenshots belong in SVN `/assets/`, not in the ZIP.
 | `[velora-club-breeders]`  | Member breeders, filterable + sortable, table/cards layout | `/nasi-hodowcy` |
 | `[velora-club-listings]`  | Listings from all member breeders | `/oferta-hodowcow` |
 | `[velora-club-posts]`     | Latest club news | `/aktualnosci` |
-| `[velora-club-events]`    | Upcoming shows and exhibitions | `/wystawy-i-pokazy` |
+| `[velora-club-events]`    | Upcoming shows and exhibitions; shows the nearest event's poster above the list (`show_poster="false"` turns it off) | `/wystawy-i-pokazy` |
 | `[velora-club-documents]` | Downloadable docs (regulations, forms, statute) grouped by category | `/dokumenty` |
 | `[velora-club-contact]`   | Contact form — visitor picks a topic for context; message lands in the club's Velora inbox (Bearer key required) | `/kontakt` |
 
