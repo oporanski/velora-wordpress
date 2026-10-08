@@ -173,7 +173,7 @@ msgid "contact form — messages are delivered to your club inbox in Velora"
 msgstr ""
 
 #: includes/view-settings.php:147
-msgid "Optional attributes: slug=\"...\" limit=\"50\" theme=\"auto|light|dark\"."
+msgid "Optional attributes: slug=\"...\" limit=\"50\" theme=\"auto|light|dark\". The breeders list also takes per_page=\"50\" (breeders shown per page, \"all\" turns paging off); its limit is how many breeders to fetch in total (default 500)."
 msgstr ""
 
 #: blocks/editor.js:16
@@ -226,6 +226,14 @@ msgstr ""
 
 #: blocks/editor.js:108
 msgid "Velora — Breeders"
+msgstr ""
+
+#: blocks/editor.js:121
+msgid "Breeders per page"
+msgstr ""
+
+#: blocks/editor.js:122
+msgid "A number, or \"all\" to show every breeder without paging."
 msgstr ""
 
 #: blocks/editor.js:120

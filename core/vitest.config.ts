@@ -39,10 +39,11 @@ export default defineConfig({
       // 2026-10-08: events.ts (shared with the breeder plugin, previously
       // untested and so not instrumented) went to 100% lines/functions, 95.8%
       // branches with the club poster; global branches measured 91.44%.
+      // 2026-10-08: club-breeders paging + pager.ts; global branches measured 92.13%.
       thresholds: {
         lines: 99,
         functions: 99,
-        branches: 91,
+        branches: 92,
         statements: 99,
       },
     },

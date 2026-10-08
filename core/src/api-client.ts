@@ -172,6 +172,7 @@ export interface PaginatedResponse<T> {
   data: T[]
   total?: number
   page?: number
+  limit?: number
 }
 
 /**
@@ -219,6 +220,9 @@ function prefixAssetUrls<T>(value: T, base: string): T {
   return walk(value) as T
 }
 
+/** Upper bound on requests per club-breeders fetch (50 rows each in production). */
+const MAX_BREEDER_PAGES = 20
+
 export class ApiClient {
   constructor(private readonly config: VeloraConfig) {}
 
@@ -236,11 +240,36 @@ export class ApiClient {
     return body.data ?? []
   }
 
-  async getClubBreeders(slug: string, limit = 50): Promise<RawClubBreeder[]> {
-    const body = await this.getJson<PaginatedResponse<RawClubBreeder>>(
-      `${this.config.apiBase}/v1/clubs/${encodeURIComponent(slug)}/breeders?limit=${limit}`,
-    )
-    return body.data ?? []
+  /**
+   * The server caps the page size (50 on production) whatever `limit` asks
+   * for, so one request silently drops the rest of a larger club. Walk the
+   * pages until `limit` rows are gathered or the server runs out.
+   */
+  async getClubBreeders(slug: string, limit = 500): Promise<RawClubBreeder[]> {
+    const out: RawClubBreeder[] = []
+    const seen = new Set<string>()
+    for (let page = 1; page <= MAX_BREEDER_PAGES && out.length < limit; page++) {
+      const body = await this.getJson<PaginatedResponse<RawClubBreeder>>(
+        `${this.config.apiBase}/v1/clubs/${encodeURIComponent(slug)}/breeders?limit=${limit}&page=${page}`,
+      )
+      const batch = body.data ?? []
+      if (batch.length === 0) break
+      let added = 0
+      for (const row of batch) {
+        if (out.length >= limit) break
+        if (seen.has(row.id)) continue
+        seen.add(row.id)
+        out.push(row)
+        added++
+      }
+      // A page with nothing new means the server ignores `page` and keeps
+      // returning the same rows; without this stop the loop would spin on them.
+      if (added === 0) break
+      const pageSize = body.limit ?? batch.length
+      if (batch.length < pageSize) break
+      if (typeof body.total === 'number' && out.length >= body.total) break
+    }
+    return out
   }
 
   async getEvents(

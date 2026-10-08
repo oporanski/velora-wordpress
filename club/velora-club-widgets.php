@@ -3,7 +3,7 @@
  * Plugin Name:       Velora Club Widgets
  * Plugin URI:        https://velora.pet/
  * Description:       Embed your Velora breeder club content (member breeders, gallery, listings, posts, events, documents, contact form) on your WordPress site.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Velora
@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('VELORA_CLUB_PLUGIN_VERSION', '1.2.0');
+define('VELORA_CLUB_PLUGIN_VERSION', '1.3.0');
 define('VELORA_CLUB_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('VELORA_CLUB_PLUGIN_URL', plugin_dir_url(__FILE__));
 

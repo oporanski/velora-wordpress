@@ -70,6 +70,44 @@ class ClubShortcodesTest extends TestCase
         self::assertStringContainsString('data-limit="12"', $html);
     }
 
+    public function test_shortcode_breeders_defaults_to_50_per_page_and_500_fetched(): void
+    {
+        Functions\when('get_option')->justReturn('');
+
+        $html = Velora_Club_Plugin::shortcode_breeders(['slug' => 'c']);
+
+        self::assertStringContainsString('data-per-page="50"', $html);
+        self::assertStringContainsString('data-limit="500"', $html);
+    }
+
+    /**
+     * @dataProvider perPageProvider
+     */
+    public function test_shortcode_breeders_sanitises_per_page(string $given, string $expected): void
+    {
+        Functions\when('get_option')->justReturn('');
+
+        $html = Velora_Club_Plugin::shortcode_breeders(['slug' => 'c', 'per_page' => $given]);
+
+        self::assertStringContainsString('data-per-page="' . $expected . '"', $html);
+    }
+
+    public static function perPageProvider(): array
+    {
+        return [
+            'explicit number'  => ['100', '100'],
+            'all'              => ['all', 'all'],
+            'all, upper case'  => ['ALL', 'all'],
+            'all, padded'      => [' All ', 'all'],
+            'large number'     => ['150', '150'],
+            // Only "all" turns paging off; a typo must not do it silently.
+            'negative'         => ['-5', '50'],
+            'zero'             => ['0', '50'],
+            'not a number'     => ['abc', '50'],
+            'empty'            => ['', '50'],
+        ];
+    }
+
     // -----------------------------------------------------------------------
     // shortcode_contact (club-specific attributes)
     // -----------------------------------------------------------------------

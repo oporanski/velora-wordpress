@@ -26,10 +26,12 @@ class Velora_Club_Blocks extends Velora_Club_Base_Blocks
         'velora-club/breeders' => [
             'shortcode'  => 'velora-club-breeders',
             'attributes' => [
-                'slug'   => ['type' => 'string', 'default' => ''],
-                'limit'  => ['type' => 'number', 'default' => 200],
-                'layout' => ['type' => 'string', 'default' => 'auto'],
-                'theme'  => ['type' => 'string', 'default' => 'auto'],
+                'slug'     => ['type' => 'string', 'default' => ''],
+                'limit'    => ['type' => 'number', 'default' => 500],
+                // String, not number: besides a count it accepts "all".
+                'per_page' => ['type' => 'string', 'default' => '50'],
+                'layout'   => ['type' => 'string', 'default' => 'auto'],
+                'theme'    => ['type' => 'string', 'default' => 'auto'],
             ],
         ],
         'velora-club/listings' => [

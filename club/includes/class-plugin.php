@@ -254,20 +254,33 @@ class Velora_Club_Plugin extends Velora_Club_Base_Plugin
 
     public static function shortcode_breeders($atts): string
     {
+        // Two different numbers: `limit` is how many breeders to FETCH from the
+        // API in total, `per_page` is how many to SHOW on one page of the list.
+        // `per_page` may also be "all" (no paging), so it is not run through
+        // intval() — that would turn "all" into 0.
         $atts = shortcode_atts([
-            'slug'   => static::default_slug(),
-            'limit'  => 200,
-            'layout' => 'auto', // auto | cards | table
-            'theme'  => 'auto',
+            'slug'     => static::default_slug(),
+            'limit'    => 500,
+            'per_page' => 50,
+            'layout'   => 'auto', // auto | cards | table
+            'theme'    => 'auto',
         ], $atts, 'velora-club-breeders');
 
         self::ensure_assets_enqueued();
 
+        $per_page = strtolower(trim((string) $atts['per_page']));
+        // Only the literal "all" turns paging off. Anything that is not a
+        // positive count — a typo, a negative, a zero — falls back to the
+        // default, because silently showing one endless page is the very
+        // failure this attribute exists to fix.
+        $per_page = $per_page === 'all' ? 'all' : (string) (intval($per_page) > 0 ? intval($per_page) : 50);
+
         return self::widget_markup('club-breeders', [
-            'data-club'   => $atts['slug'],
-            'data-limit'  => (string) intval($atts['limit']),
-            'data-layout' => $atts['layout'],
-            'data-theme'  => $atts['theme'],
+            'data-club'     => $atts['slug'],
+            'data-limit'    => (string) intval($atts['limit']),
+            'data-per-page' => $per_page,
+            'data-layout'   => $atts['layout'],
+            'data-theme'    => $atts['theme'],
         ]);
     }
 
