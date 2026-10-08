@@ -155,6 +155,7 @@
       limit: { type: 'number', default: 12 },
       when: { type: 'string', default: 'upcoming' },
       show_filter: { type: 'string', default: 'true' },
+      show_poster: { type: 'string', default: 'true' },
       theme: { type: 'string', default: 'auto' },
     },
     extraControls: function (props) {
@@ -177,6 +178,15 @@
             { label: __('Hide', 'velora-club-widgets'), value: 'false' },
           ],
           onChange: function (v) { props.setAttributes({ show_filter: v }); },
+        }),
+        el(SelectControl, {
+          label: __('Show next event poster', 'velora-club-widgets'),
+          value: props.attributes.show_poster || 'true',
+          options: [
+            { label: __('Show', 'velora-club-widgets'), value: 'true' },
+            { label: __('Hide', 'velora-club-widgets'), value: 'false' },
+          ],
+          onChange: function (v) { props.setAttributes({ show_poster: v }); },
         }),
       ];
     },

@@ -55,6 +55,7 @@ class Velora_Club_Blocks extends Velora_Club_Base_Blocks
                 'limit'       => ['type' => 'number', 'default' => 12],
                 'when'        => ['type' => 'string', 'default' => 'upcoming'],
                 'show_filter' => ['type' => 'string', 'default' => 'true'],
+                'show_poster' => ['type' => 'string', 'default' => 'true'],
                 'theme'       => ['type' => 'string', 'default' => 'auto'],
             ],
         ],

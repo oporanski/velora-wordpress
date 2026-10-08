@@ -4,7 +4,7 @@ Tags:              club, federation, cattery, kennel, pedigree
 Requires at least: 6.0
 Tested up to:      7.0
 Requires PHP:      7.4
-Stable tag:        1.1.0
+Stable tag:        1.2.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,7 +45,7 @@ All widgets are theme-neutral — they pick up your WordPress theme's typography
 `[velora-club-contact]`
 `[velora-club-member-area]`
 
-Most shortcodes accept optional `slug=`, `limit=`, `theme="auto|light|dark"`. Exceptions: `[velora-club-about]` and `[velora-club-contact]` do not accept `limit=`; `[velora-club-member-area]` accepts neither `slug=` nor `limit=` — it shows no club data, so it takes only `heading=`, `text=` and `theme=`; `[velora-club-breeders]` also accepts `layout="auto|cards|table"`; `[velora-club-gallery]` uses `photos_per_album=` instead of `limit=`; `[velora-club-events]` also accepts `when="upcoming|past|all"` and `show_filter="true|false"`.
+Most shortcodes accept optional `slug=`, `limit=`, `theme="auto|light|dark"`. Exceptions: `[velora-club-about]` and `[velora-club-contact]` do not accept `limit=`; `[velora-club-member-area]` accepts neither `slug=` nor `limit=` — it shows no club data, so it takes only `heading=`, `text=` and `theme=`; `[velora-club-breeders]` also accepts `layout="auto|cards|table"`; `[velora-club-gallery]` uses `photos_per_album=` instead of `limit=`; `[velora-club-events]` also accepts `when="upcoming|past|all"` and `show_filter="true|false"` and `show_poster="true|false"`.
 
 = Migrating from a manually-maintained breeder list =
 
@@ -119,7 +119,7 @@ Yes — your club must have a profile at https://velora.pet/.
 
 = Can I show only upcoming events? =
 
-Yes. Use `[velora-club-events when="upcoming"]` (this is the default). For an archive page use `when="past"`. Set `show_filter="false"` to hide the toolbar.
+Yes. Use `[velora-club-events when="upcoming"]` (this is the default). For an archive page use `when="past"`. Set `show_filter="false"` to hide the toolbar. Upcoming events show the poster of the nearest event with an image above the list; set `show_poster="false"` to turn that off.
 
 = How do my members sign in? =
 
@@ -132,6 +132,10 @@ The panel is plain static text and links: it contacts no server, needs no API ke
 Yes — they use `color: inherit` and CSS custom properties so they pick up your WordPress theme's colors. Force a specific palette with `theme="light"` or `theme="dark"`.
 
 == Changelog ==
+
+= 1.2.0 =
+* The events widget shows the poster of the nearest upcoming event above the list, whole and uncropped. It picks the earliest event that has a poster and is not over yet, and links to its page on Velora.
+* New `show_poster="true|false"` attribute (and a block setting) to turn the poster off. Default: on.
 
 = 1.1.0 =
 * New widget: **Club members' area** (`[velora-club-member-area]` and a matching block) — a static sign-in panel that explains what Velora is and points members at their own account. Makes no API request and loads no JavaScript.
@@ -146,6 +150,9 @@ Yes — they use `color: inherit` and CSS custom properties so they pick up your
 * Contact form is submitted through a server-side proxy on your own WordPress site — your Velora API key never reaches the visitor's browser.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+The events widget now shows the next event's poster above the list. Add show_poster="false" to the shortcode to keep the old look.
 
 = 1.1.0 =
 Adds the Club members' area panel. Nothing existing changes.

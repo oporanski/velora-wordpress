@@ -2,7 +2,7 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Velora Club Widgets 1.1.0\n"
+"Project-Id-Version: Velora Club Widgets 1.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/velora-club-widgets\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -274,6 +274,10 @@ msgstr ""
 
 #: blocks/editor.js:173
 msgid "Show filter toolbar"
+msgstr ""
+
+#: blocks/editor.js:183
+msgid "Show next event poster"
 msgstr ""
 
 #: blocks/editor.js:176

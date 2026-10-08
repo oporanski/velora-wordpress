@@ -36,10 +36,13 @@ export default defineConfig({
       // went from untracked (0 tests -> not instrumented by v8 at all, so it
       // contributed nothing to any figure) to 100% lines/statements/functions,
       // 96.87% branches — measured global branches 90.56%.
+      // 2026-10-08: events.ts (shared with the breeder plugin, previously
+      // untested and so not instrumented) went to 100% lines/functions, 95.8%
+      // branches with the club poster; global branches measured 91.44%.
       thresholds: {
         lines: 99,
         functions: 99,
-        branches: 90,
+        branches: 91,
         statements: 99,
       },
     },
