@@ -3,6 +3,7 @@ import type { VeloraListing } from '../api-client'
 import { breedName } from '../breeds'
 import { injectListingsJsonLd } from '../seo'
 import { imgSrc } from '../image'
+import { pickText, setLang } from '../localized'
 
 export class ListingsWidget extends Widget {
   async mount(): Promise<void> {
@@ -57,7 +58,7 @@ export class ListingsWidget extends Widget {
       const img = document.createElement('img')
       img.className = 'velora-card-img'
       img.src = imgSrc(l.images[0], 'md')
-      img.alt = l.title
+      img.alt = pickText(l, 'title').text
       img.loading = 'lazy'
       card.appendChild(img)
     } else {
@@ -67,7 +68,10 @@ export class ListingsWidget extends Widget {
     }
 
     const body = this.createDiv('velora-card-body')
-    body.appendChild(this.createEl('h3', 'velora-card-title', l.title))
+    const title = pickText(l, 'title')
+    const heading = this.createEl('h3', 'velora-card-title', title.text)
+    setLang(heading, title.lang)
+    body.appendChild(heading)
     body.appendChild(this.createEl('p', 'velora-card-breed', breedName(l)))
 
     const meta = this.createDiv('velora-card-meta')

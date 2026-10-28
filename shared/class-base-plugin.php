@@ -257,6 +257,20 @@ abstract class Velora_Base_Plugin
         // ticks the checkbox in plugin settings.
         $show_credit  = (bool) get_option(static::option_show_credit(), false);
 
+        $config = [
+            'apiBase'         => $api_base,
+            'profileBase'     => $profile_base,
+            'locale'          => $locale,
+            'contactProxyUrl' => rest_url(static::contact_proxy_namespace() . '/contact'),
+            'showCredit'      => $show_credit,
+        ];
+        // Language of the site's content (not the widget-label `locale`
+        // setting): lets the API serve the matching language version.
+        $content_lang = static::content_language();
+        if ($content_lang !== null) {
+            $config['contentLang'] = $content_lang;
+        }
+
         // SECURITY: API key is intentionally NOT included here. Contact
         // form submissions go through the WP REST proxy
         // (see class-rest.php), which reads the key server-side and
@@ -267,15 +281,24 @@ abstract class Velora_Base_Plugin
         // hit api_base directly without auth — they're public endpoints.
         wp_add_inline_script(
             $handle,
-            'window.' . static::config_global_name() . ' = ' . wp_json_encode([
-                'apiBase'         => $api_base,
-                'profileBase'     => $profile_base,
-                'locale'          => $locale,
-                'contactProxyUrl' => rest_url(static::contact_proxy_namespace() . '/contact'),
-                'showCredit'      => $show_credit,
-            ]) . ';',
+            'window.' . static::config_global_name() . ' = ' . wp_json_encode($config) . ';',
             'before'
         );
+    }
+
+    /**
+     * Two-letter ISO 639-1 code of the SITE language ("de_DE" -> "de"), or
+     * null when the locale is not a two-letter language ("fil", "haw_US":
+     * three-letter codes have no ISO 639-1 equivalent the API could use).
+     * get_locale() is the site's language; determine_locale() would follow the
+     * logged-in user's profile language inside wp-admin.
+     */
+    public static function content_language(): ?string
+    {
+        if (preg_match('/^([a-z]{2})(?:_|$)/', strtolower((string) get_locale()), $m) !== 1) {
+            return null;
+        }
+        return $m[1];
     }
 
     public static function enqueue_admin_assets($hook): void

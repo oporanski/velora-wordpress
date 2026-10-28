@@ -117,6 +117,10 @@ The Cap widget draws a small "Secured by Cap" badge linking to its own website, 
 
 Yes. The plugin embeds content from your Velora breeder profile, so you need an active profile at https://velora.pet/.
 
+= In which language are events, posts and listings shown? =
+
+In the language of your WordPress site, when the author has published a version in that language; otherwise in English if there is an English version, and otherwise the original. The **Language** setting only changes the widget's own labels.
+
 = Are the read-only widgets free? =
 
 The animals, gallery, listings, posts and events widgets work without any API key — they read public profile data.

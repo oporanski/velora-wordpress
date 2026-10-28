@@ -1,4 +1,5 @@
 import type { VeloraConfig } from './config'
+import type { LocalizedContract } from './localized'
 
 export interface ApiError {
   status: number
@@ -67,7 +68,7 @@ export interface ClubBreeder {
 // Raw API response shape before normalization — breeds may be objects.
 export type RawClubBreeder = Omit<ClubBreeder, 'breeds'> & { breeds?: BreedRef[] }
 
-export interface VeloraEvent {
+export interface VeloraEvent extends LocalizedContract<VeloraEvent> {
   id: string
   title: string
   slug: string | null
@@ -78,7 +79,7 @@ export interface VeloraEvent {
   imageUrl: string | null
 }
 
-export interface VeloraListing {
+export interface VeloraListing extends LocalizedContract<VeloraListing> {
   id: string
   slug: string | null
   title: string
@@ -94,7 +95,7 @@ export interface VeloraListing {
   createdAt: string
 }
 
-export interface VeloraPost {
+export interface VeloraPost extends LocalizedContract<VeloraPost> {
   id: string
   title: string
   content: string
@@ -124,6 +125,11 @@ export interface VeloraProfile {
   socialTiktok?: string | null
   socialWebsite?: string | null
   verified?: boolean
+  /**
+   * Language versions of the profile texts, one contract per group of fields.
+   * The description is in `localizedGroups.profile`, not at the top level.
+   */
+  localizedGroups?: { profile?: LocalizedContract<VeloraProfile> }
 }
 
 export interface VeloraGalleryPhoto {
@@ -262,6 +268,17 @@ export class ApiClient {
     return prefixAssetUrls(body, this.config.profileBase)
   }
 
+  /**
+   * Adds the site's content language to the URL of the routes that serve
+   * translated content. Without one the API falls back to the visitor's
+   * Accept-Language header, so nothing is appended.
+   */
+  private withLang(url: string): string {
+    const lang = this.config.contentLang
+    if (!lang) return url
+    return `${url}${url.includes('?') ? '&' : '?'}${new URLSearchParams({ lang })}`
+  }
+
   async getBreederAnimals(slug: string, limit = 12): Promise<BreederAnimal[]> {
     const body = await this.getJson<PaginatedResponse<BreederAnimal>>(
       `${this.config.apiBase}/v1/breeders/${encodeURIComponent(slug)}/animals?limit=${limit}`,
@@ -298,28 +315,28 @@ export class ApiClient {
     when: 'upcoming' | 'past' | 'all' = 'upcoming',
   ): Promise<VeloraEvent[]> {
     const body = await this.getJson<PaginatedResponse<VeloraEvent>>(
-      `${this.config.apiBase}/v1/${source}/${encodeURIComponent(slug)}/events?limit=${limit}&when=${when}`,
+      this.withLang(`${this.config.apiBase}/v1/${source}/${encodeURIComponent(slug)}/events?limit=${limit}&when=${when}`),
     )
     return body.data ?? []
   }
 
   async getListings(source: 'breeders' | 'clubs', slug: string, limit = 20): Promise<VeloraListing[]> {
     const body = await this.getJson<PaginatedResponse<VeloraListing>>(
-      `${this.config.apiBase}/v1/${source}/${encodeURIComponent(slug)}/listings?limit=${limit}`,
+      this.withLang(`${this.config.apiBase}/v1/${source}/${encodeURIComponent(slug)}/listings?limit=${limit}`),
     )
     return body.data ?? []
   }
 
   async getPosts(source: 'breeders' | 'clubs', slug: string, limit = 10): Promise<VeloraPost[]> {
     const body = await this.getJson<PaginatedResponse<VeloraPost>>(
-      `${this.config.apiBase}/v1/${source}/${encodeURIComponent(slug)}/posts?limit=${limit}`,
+      this.withLang(`${this.config.apiBase}/v1/${source}/${encodeURIComponent(slug)}/posts?limit=${limit}`),
     )
     return body.data ?? []
   }
 
   async getProfile(source: 'breeders' | 'clubs', slug: string): Promise<VeloraProfile> {
     return this.getJson<VeloraProfile>(
-      `${this.config.apiBase}/v1/${source}/${encodeURIComponent(slug)}`,
+      this.withLang(`${this.config.apiBase}/v1/${source}/${encodeURIComponent(slug)}`),
     )
   }
 

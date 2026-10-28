@@ -1,6 +1,7 @@
 import { Widget, getAttr } from './base'
 import type { VeloraPost } from '../api-client'
 import { imgSrc } from '../image'
+import { pickText, setLang } from '../localized'
 
 /**
  * Posts widget — renders the latest published posts from a breeder or club.
@@ -68,7 +69,9 @@ export class PostsWidget extends Widget {
 
     const body = this.createDiv('velora-post-body')
 
-    const title = this.createEl('h3', 'velora-post-title', post.title)
+    const picked = pickText(post, 'title')
+    const title = this.createEl('h3', 'velora-post-title', picked.text)
+    setLang(title, picked.lang)
     body.appendChild(title)
 
     if (post.publishedAt) {
@@ -78,10 +81,12 @@ export class PostsWidget extends Widget {
       body.appendChild(this.createEl('p', 'velora-post-date', `${this.ctx.t('postsPublishedAt')}: ${date}`))
     }
 
-    if (post.content) {
+    const content = pickText(post, 'content')
+    if (content.text) {
       const contentBox = this.createDiv('velora-post-content')
+      setLang(contentBox, content.lang)
       // sanitizeHtml returns a DocumentFragment of allow-listed nodes only.
-      const safe = sanitizeHtml(post.content, this.ctx.config.profileBase)
+      const safe = sanitizeHtml(content.text, this.ctx.config.profileBase)
       contentBox.appendChild(safe)
       body.appendChild(contentBox)
     }

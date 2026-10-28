@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import type { Mock } from 'vitest'
 import { ApiClient, VeloraApiError } from '../api-client'
 import type { VeloraConfig } from '../config'
 
@@ -16,12 +17,12 @@ function makeClient(overrides?: Partial<VeloraConfig>): ApiClient {
   return new ApiClient({ ...BASE_CONFIG, ...overrides })
 }
 
-function mockFetchOk(data: unknown, status = 200): ReturnType<typeof vi.fn> {
-  return vi.fn().mockResolvedValue({
+function mockFetchOk(data: unknown, status = 200): Mock<typeof fetch> {
+  return vi.fn<typeof fetch>().mockResolvedValue({
     ok: status >= 200 && status < 300,
     status,
     json: vi.fn().mockResolvedValue(data),
-  })
+  } as unknown as Response)
 }
 
 describe('ApiClient', () => {

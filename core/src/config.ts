@@ -34,6 +34,13 @@ export interface VeloraConfig {
    * explicitly asking for them.
    */
   showCredit: boolean
+  /**
+   * Language of the host site's content (ISO 639-1, e.g. "de"), sent to the
+   * API so it can pick the matching language version of events, posts and
+   * listings. Distinct from `locale`, which only sets the widget's own labels.
+   * Unset: the API falls back to the visitor's Accept-Language header.
+   */
+  contentLang?: string
 }
 
 declare global {
@@ -51,6 +58,13 @@ const DEFAULTS: VeloraConfig = {
   theme: 'auto',
   contactProxyUrl: null,
   showCredit: false,
+}
+
+const CONTENT_LANG = /^[a-z]{2}$/
+
+/** A two-letter lowercase code, or undefined for anything else. */
+function validContentLang(value: unknown): string | undefined {
+  return typeof value === 'string' && CONTENT_LANG.test(value) ? value : undefined
 }
 
 function readMeta(name: string): string | null {
@@ -104,6 +118,7 @@ export function resolveConfig(globalName?: string): VeloraConfig {
     theme: (injected.theme as VeloraConfig['theme']) ?? DEFAULTS.theme,
     contactProxyUrl: injected.contactProxyUrl ?? readMeta('velora-contact-proxy-url') ?? DEFAULTS.contactProxyUrl,
     showCredit: injected.showCredit ?? readBoolMeta('velora-show-credit', DEFAULTS.showCredit),
+    contentLang: validContentLang(injected.contentLang),
   }
 }
 

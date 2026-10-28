@@ -15,6 +15,7 @@
 
 import type { BreederAnimal, VeloraEvent, VeloraListing } from './api-client'
 import { breedName, colorName } from './breeds'
+import { pickText } from './localized'
 
 export function injectAnimalsJsonLd(
   root: HTMLElement,
@@ -65,7 +66,7 @@ export function injectListingsJsonLd(
       position: i + 1,
       item: {
         '@type': 'Product',
-        name: l.title,
+        name: pickText(l, 'title').text,
         image: l.images && l.images.length > 0 ? l.images[0] : undefined,
         url: l.slug ? `${profileBase}/marketplace/${encodeURIComponent(l.slug)}` : undefined,
         category: breedName(l) || undefined,
@@ -91,7 +92,7 @@ export function injectEventsJsonLd(
     const event = {
       '@context': 'https://schema.org',
       '@type': 'Event',
-      name: e.title,
+      name: pickText(e, 'title').text,
       startDate: e.startDate,
       endDate: e.endDate ?? undefined,
       image: e.imageUrl ?? undefined,

@@ -2,6 +2,7 @@ import { Widget, getAttr } from './base'
 import type { VeloraProfile } from '../api-client'
 import { normalizeBreeds } from '../breeds'
 import { imgSrc } from '../image'
+import { pickText, setLang } from '../localized'
 
 /**
  * About widget — shared between breeder and club via data-source.
@@ -78,9 +79,14 @@ export class AboutWidget extends Widget {
     wrap.appendChild(this.buildHeader(p, source))
 
     // Description preview (strip HTML)
-    if (p.description) {
-      const text = stripHtml(p.description)
-      if (text) wrap.appendChild(this.createEl('p', 'velora-about-description', text))
+    const description = pickText(p, 'description', p.localizedGroups?.profile)
+    if (description.text) {
+      const text = stripHtml(description.text)
+      if (text) {
+        const para = this.createEl('p', 'velora-about-description', text)
+        setLang(para, description.lang)
+        wrap.appendChild(para)
+      }
     }
 
     // Contact row

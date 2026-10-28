@@ -29,6 +29,35 @@ portal's public gateway:
 and this repository has no way to know. The contract is unwritten — treat
 `core/src/api-client.ts` as its specification.
 
+### Content language
+
+Events, posts, listings and the profile description can exist in several
+language versions. The routes that serve them take an optional `lang` query
+parameter (two-letter ISO 639-1 code; anything else is answered with `400`):
+`/v1/{breeders,clubs}/:slug`, `/v1/{breeders,clubs}/:slug/{events,posts,listings}`
+and `/v1/public/{events,listings}`.
+
+- The plugin publishes the site's language (`get_locale()`, e.g. `de_DE` ->
+  `de`; locales without a two-letter code, such as `fil`, publish nothing) to
+  the embed as `contentLang`, and the embed appends `lang=<contentLang>` to
+  those requests. This is separate from the plugin's own `locale` setting
+  (Polish/English), which only sets the widget's labels.
+- When `contentLang` is absent, no `lang` is sent and the API falls back to the
+  visitor's `Accept-Language` header.
+- The version shown is chosen in this order: the site's language, then English,
+  then the author's original.
+- The base fields (`title`, `description`, `content`, ...) always carry the
+  original. For events, posts and listings the response adds
+  `localized: { language, <same fields> }` and `availableLanguages: string[]`.
+  A field the chosen version has no text for is `null` there, and the original
+  is shown.
+- A profile (`/v1/{breeders,clubs}/:slug`) groups its fields, so the description
+  is read from `localizedGroups.profile.localized.description` (with
+  `localizedGroups.profile.availableLanguages`), not from a top-level `localized`.
+  The profile name is not translated.
+- Widgets show the version's text where there is one, else the base field, and
+  set `lang` on the element only when the text really came from the version.
+
 One widget is deliberately outside that dependency: the club plugin's members'
 area (`[velora-club-member-area]`) is static markup with links to the portal's
 `/login`, `/register` and `/forgot-password` pages. It calls no API, mounts

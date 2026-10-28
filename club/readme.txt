@@ -117,6 +117,10 @@ The Cap widget draws a small "Secured by Cap" badge linking to its own website, 
 
 Yes — your club must have a profile at https://velora.pet/.
 
+= In which language are events, posts and listings shown? =
+
+In the language of your WordPress site, when the author has published a version in that language; otherwise in English if there is an English version, and otherwise the original. The **Language** setting only changes the widget's own labels.
+
 = Can I show only upcoming events? =
 
 Yes. Use `[velora-club-events when="upcoming"]` (this is the default). For an archive page use `when="past"`. Set `show_filter="false"` to hide the toolbar. Upcoming events show the poster of the nearest event with an image above the list; set `show_poster="false"` to turn that off.

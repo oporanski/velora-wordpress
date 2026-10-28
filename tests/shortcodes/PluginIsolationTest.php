@@ -23,6 +23,7 @@ class PluginIsolationTest extends TestCase
     {
         parent::setUp();
         Monkey\setUp();
+        Functions\when('get_locale')->justReturn('pl_PL');
         Functions\stubs(['wp_register_script', 'wp_register_style', 'wp_script_is',
             'wp_style_is', 'wp_enqueue_script', 'wp_enqueue_style']);
         Functions\when('esc_attr')->alias('htmlspecialchars');

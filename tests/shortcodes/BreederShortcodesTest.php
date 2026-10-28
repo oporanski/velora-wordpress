@@ -29,6 +29,7 @@ class BreederShortcodesTest extends TestCase
         // wp_script_is returns false so assets get enqueued on each call
         Functions\when('wp_script_is')->justReturn(false);
         Functions\when('wp_style_is')->justReturn(false);
+        Functions\when('get_locale')->justReturn('pl_PL');
     }
 
     protected function tearDown(): void
@@ -293,6 +294,62 @@ class BreederShortcodesTest extends TestCase
 
         self::assertSame(['script:velora-breeder-embed-core', 'style:velora-breeder-embed-core', 'inline:velora-breeder-embed-core'], $handles);
         self::assertStringStartsWith('window.VeloraBreederEmbedConfig = ', $inlineScript);
+    }
+
+    /** @return array<string, mixed> config object published to the page */
+    private function publishedConfig(string $option = ''): array
+    {
+        Functions\when('get_option')->justReturn($option);
+        Functions\when('rest_url')->returnArg(1);
+        $inline = '';
+        Functions\when('wp_add_inline_script')->alias(function ($handle, $code) use (&$inline) {
+            $inline .= $code;
+        });
+        Velora_Breeder_Plugin::enqueue_assets();
+        $json = preg_replace('/^window\.\w+ = (.*);$/', '$1', $inline);
+        return json_decode($json, true);
+    }
+
+    public function test_enqueue_assets_publishes_site_language_as_content_lang(): void
+    {
+        Functions\when('get_locale')->justReturn('de_DE');
+        self::assertSame('de', $this->publishedConfig()['contentLang']);
+    }
+
+    public function test_content_lang_takes_first_two_letters_of_regional_locale(): void
+    {
+        Functions\when('get_locale')->justReturn('pt_BR');
+        self::assertSame('pt', $this->publishedConfig()['contentLang']);
+    }
+
+    public function test_content_lang_for_two_letter_locales(): void
+    {
+        foreach (['de_DE' => 'de', 'pt_BR' => 'pt', 'pl' => 'pl'] as $locale => $expected) {
+            Functions\when('get_locale')->justReturn($locale);
+            self::assertSame($expected, $this->publishedConfig()['contentLang'], $locale);
+        }
+    }
+
+    public function test_content_lang_is_lowercased(): void
+    {
+        Functions\when('get_locale')->justReturn('DE_de');
+        self::assertSame('de', $this->publishedConfig()['contentLang']);
+    }
+
+    public function test_content_lang_is_omitted_for_values_that_are_not_a_locale(): void
+    {
+        foreach (['', 'x', '12_34', '../x', 'fil', 'haw_US', 'ast', 'kab', 'tah'] as $odd) {
+            Functions\when('get_locale')->justReturn($odd);
+            self::assertArrayNotHasKey('contentLang', $this->publishedConfig(), "locale '$odd'");
+        }
+    }
+
+    public function test_content_lang_is_separate_from_the_widget_label_locale(): void
+    {
+        Functions\when('get_locale')->justReturn('de_DE');
+        $config = $this->publishedConfig('en');
+        self::assertSame('en', $config['locale']);
+        self::assertSame('de', $config['contentLang']);
     }
 
     // -----------------------------------------------------------------------

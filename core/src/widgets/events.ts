@@ -3,6 +3,7 @@ import type { VeloraEvent } from '../api-client'
 import { injectEventsJsonLd } from '../seo'
 import { imgSrc } from '../image'
 import { pickFeaturedPoster } from '../pick-featured-poster'
+import { pickText, setLang } from '../localized'
 
 type WhenFilter = 'upcoming' | 'past' | 'all'
 
@@ -97,7 +98,7 @@ export class EventsWidget extends Widget {
     const img = document.createElement('img')
     img.className = 'velora-event-poster-img'
     img.src = imgSrc(event.imageUrl, 'lg')
-    img.alt = event.title
+    img.alt = pickText(event, 'title').text
     img.loading = 'lazy'
     link.appendChild(img)
     return link
@@ -141,7 +142,7 @@ export class EventsWidget extends Widget {
       const img = document.createElement('img')
       img.className = 'velora-card-img'
       img.src = imgSrc(event.imageUrl, 'md')
-      img.alt = event.title
+      img.alt = pickText(event, 'title').text
       img.loading = 'lazy'
       card.appendChild(img)
     } else {
@@ -151,7 +152,10 @@ export class EventsWidget extends Widget {
     }
 
     const body = this.createDiv('velora-card-body')
-    body.appendChild(this.createEl('h3', 'velora-card-title', event.title))
+    const title = pickText(event, 'title')
+    const heading = this.createEl('h3', 'velora-card-title', title.text)
+    setLang(heading, title.lang)
+    body.appendChild(heading)
 
     const dateLabel = formatDateRange(event.startDate, event.endDate, this.ctx.config.locale)
     if (dateLabel) {
