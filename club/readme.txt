@@ -4,7 +4,7 @@ Tags:              club, federation, cattery, kennel, pedigree
 Requires at least: 6.0
 Tested up to:      7.0
 Requires PHP:      7.4
-Stable tag:        1.3.0
+Stable tag:        1.4.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,10 @@ The panel is plain static text and links: it contacts no server, needs no API ke
 Yes — they use `color: inherit` and CSS custom properties so they pick up your WordPress theme's colors. Force a specific palette with `theme="light"` or `theme="dark"`.
 
 == Changelog ==
+
+= 1.4.0 =
+* Content follows the language of your WordPress site. When a breeder or club has published a version of a description, event, post or listing in that language, the widget shows it; otherwise it falls back to English if available, and otherwise to the original. The **Language** setting still changes only the widget's own labels.
+* Text taken from a language version is marked with that language (`lang` attribute), which helps screen readers and search engines.
 
 = 1.3.0 =
 * The member breeders list no longer stops at 50. Velora serves the list in batches, and the widget now walks every batch, so a club with 80 or 150 member breeders shows all of them.

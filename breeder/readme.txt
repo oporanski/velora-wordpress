@@ -4,7 +4,7 @@ Tags:              cattery, kennel, breeder, pedigree, pets
 Requires at least: 6.0
 Tested up to:      7.0
 Requires PHP:      7.4
-Stable tag:        1.0.0
+Stable tag:        1.1.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,10 @@ Yes. The widgets use `currentColor` and CSS custom properties so they inherit te
 Data shown by the widgets lives in your Velora account and is fetched via the Velora API every time a visitor loads the page — the plugin does not cache responses.
 
 == Changelog ==
+
+= 1.1.0 =
+* Content follows the language of your WordPress site. When a breeder or club has published a version of a description, event, post or listing in that language, the widget shows it; otherwise it falls back to English if available, and otherwise to the original. The **Language** setting still changes only the widget's own labels.
+* Text taken from a language version is marked with that language (`lang` attribute), which helps screen readers and search engines.
 
 = 1.0.0 =
 * Initial public release on the WordPress.org plugin directory.
